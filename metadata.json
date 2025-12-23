@@ -1,0 +1,7 @@
+{
+  "name": "Lotus Rewards App",
+  "description": "A zen-themed reward system where users earn Lotus Points for completing mindful activities. Features AI-powered proof verification and a beautiful dashboard for managing tasks and rewards.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
