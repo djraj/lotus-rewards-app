@@ -5,7 +5,7 @@ export interface Task {
   description: string;
   points: number;
   icon: string;
-  category: 'Mindfulness' | 'Growth' | 'Physical' | 'Community';
+  category: 'Referral' | 'Service' | 'Content' | 'Coordination';
 }
 
 export interface Reward {
@@ -13,7 +13,7 @@ export interface Reward {
   title: string;
   description: string;
   cost: number;
-  image: string;
+  image: string | null;
   available: boolean;
 }
 
