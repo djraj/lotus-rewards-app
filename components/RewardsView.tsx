@@ -5,23 +5,30 @@ import { Reward } from '../types';
 interface Props {
   rewards: Reward[];
   points: number;
-  onClaim: (cost: number) => boolean;
+  onClaim: (rewardId: string) => Promise<{ ok: boolean; message?: string }>;
 }
 
 const RewardsView: React.FC<Props> = ({ rewards, points, onClaim }) => {
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
+  const [claimingId, setClaimingId] = useState<string | null>(null);
 
-  const handleClaim = (reward: Reward) => {
-    if (points >= reward.cost) {
-      const success = onClaim(reward.cost);
-      if (success) {
-        setMessage({ text: `Successfully claimed ${reward.title}!`, type: 'success' });
-        setTimeout(() => setMessage(null), 3000);
-      }
-    } else {
+  const handleClaim = async (reward: Reward) => {
+    if (points < reward.cost) {
       setMessage({ text: "You don't have enough Lotus Points yet.", type: 'error' });
       setTimeout(() => setMessage(null), 3000);
+      return;
     }
+
+    setClaimingId(reward.id);
+    const result = await onClaim(reward.id);
+    setClaimingId(null);
+
+    if (result.ok) {
+      setMessage({ text: `Successfully claimed ${reward.title}!`, type: 'success' });
+    } else {
+      setMessage({ text: result.message ?? 'Could not claim this reward.', type: 'error' });
+    }
+    setTimeout(() => setMessage(null), 3000);
   };
 
   return (
@@ -63,19 +70,19 @@ const RewardsView: React.FC<Props> = ({ rewards, points, onClaim }) => {
                   <h3 className="text-2xl font-serif font-bold text-slate-800 mb-3">{reward.title}</h3>
                   <p className="text-slate-500 text-sm mb-6 leading-relaxed">{reward.description}</p>
                 </div>
-                <button 
+                <button
                   onClick={() => handleClaim(reward)}
-                  disabled={!reward.available}
-                  className={`w-full py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${
-                    canAfford 
-                    ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-100 active:scale-[0.98]' 
+                  disabled={!reward.available || claimingId === reward.id}
+                  className={`w-full py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-70 ${
+                    canAfford
+                    ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-100 active:scale-[0.98]'
                     : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                   }`}
                 >
                   {reward.available ? (
                     <>
-                      <i className="fa-solid fa-bag-shopping"></i>
-                      {canAfford ? 'Claim Reward' : `Need ${reward.cost - points} more`}
+                      <i className={`fa-solid ${claimingId === reward.id ? 'fa-spinner fa-spin' : 'fa-bag-shopping'}`}></i>
+                      {claimingId === reward.id ? 'Claiming...' : canAfford ? 'Claim Reward' : `Need ${reward.cost - points} more`}
                     </>
                   ) : 'Out of Stock'}
                 </button>

@@ -1,44 +1,62 @@
 
 import React, { useState } from 'react';
-import { Task, Submission } from '../types';
+import { Task } from '../types';
 
 interface Props {
   tasks: Task[];
-  onAddSubmission: (submission: Submission) => void;
+  onAddSubmission: (task: Task, file: File, note: string) => Promise<void>;
 }
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB, compressed further before upload
 
 const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [proof, setProof] = useState('');
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const closeModal = () => {
+    setSelectedTask(null);
+    setFile(null);
+    setPreviewUrl(null);
+    setNote('');
+    setError(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const picked = e.target.files?.[0];
+    setError(null);
+    if (!picked) return;
+    if (!picked.type.startsWith('image/')) {
+      setError('Please choose an image file.');
+      return;
+    }
+    if (picked.size > MAX_FILE_BYTES) {
+      setError('That photo is too large (max 10MB).');
+      return;
+    }
+    setFile(picked);
+    setPreviewUrl(URL.createObjectURL(picked));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTask || !proof) return;
+    if (!selectedTask || !file) return;
 
     setSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      const submission: Submission = {
-        id: Math.random().toString(36).substr(2, 9),
-        userId: 'u1',
-        taskId: selectedTask.id,
-        taskTitle: selectedTask.title,
-        proof,
-        timestamp: new Date().toISOString(),
-        status: 'pending',
-        pointsAwarded: selectedTask.points
-      };
-      onAddSubmission(submission);
+    setError(null);
+    try {
+      await onAddSubmission(selectedTask, file, note);
       setSubmitting(false);
       setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        setSelectedTask(null);
-        setProof('');
-      }, 2000);
-    }, 1500);
+      setTimeout(closeModal, 2000);
+    } catch (err) {
+      setSubmitting(false);
+      setError(err instanceof Error ? err.message : 'Failed to submit proof.');
+    }
   };
 
   return (
@@ -64,7 +82,7 @@ const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
                 <i className="fa-solid fa-leaf text-sm"></i>
                 <span>{task.points}</span>
               </div>
-              <button 
+              <button
                 onClick={() => setSelectedTask(task)}
                 className="bg-slate-900 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-slate-800 transition-colors active:scale-95"
               >
@@ -77,7 +95,7 @@ const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
 
       {selectedTask && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 relative overflow-hidden">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-8 relative overflow-hidden max-h-[90vh] overflow-y-auto">
             {success ? (
               <div className="py-12 text-center">
                 <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
@@ -88,8 +106,8 @@ const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
               </div>
             ) : (
               <>
-                <button 
-                  onClick={() => setSelectedTask(null)}
+                <button
+                  onClick={closeModal}
                   className="absolute top-6 right-6 text-slate-400 hover:text-slate-600"
                 >
                   <i className="fa-solid fa-xmark text-xl"></i>
@@ -109,27 +127,60 @@ const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Proof of Completion</label>
-                    <textarea 
-                      required
-                      className="w-full h-40 bg-slate-50 border border-slate-200 rounded-2xl p-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-200 resize-none transition-all"
-                      placeholder="Describe what you did or paste a link to your proof..."
-                      value={proof}
-                      onChange={(e) => setProof(e.target.value)}
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Proof Photo</label>
+                    {previewUrl ? (
+                      <div className="relative">
+                        <img src={previewUrl} alt="Proof preview" className="w-full h-48 object-cover rounded-2xl border border-slate-200" />
+                        <button
+                          type="button"
+                          onClick={() => { setFile(null); setPreviewUrl(null); }}
+                          className="absolute top-2 right-2 bg-white/90 rounded-full w-8 h-8 flex items-center justify-center text-slate-500 hover:text-rose-500"
+                        >
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center w-full h-40 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl cursor-pointer hover:border-rose-300 transition-colors">
+                        <i className="fa-solid fa-camera text-2xl text-slate-400 mb-2"></i>
+                        <span className="text-sm text-slate-500">Take or upload a photo</span>
+                        <input
+                          required
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          className="hidden"
+                          onChange={handleFileChange}
+                        />
+                      </label>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Note (optional)</label>
+                    <textarea
+                      className="w-full h-24 bg-slate-50 border border-slate-200 rounded-2xl p-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-200 resize-none transition-all"
+                      placeholder="Add any context for the reviewer..."
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
                     ></textarea>
                     <p className="text-[11px] text-slate-400 mt-2">
                       <i className="fa-solid fa-info-circle mr-1"></i>
                       Your submission will be reviewed by our community admins.
                     </p>
                   </div>
-                  <button 
-                    disabled={submitting}
+
+                  {error && (
+                    <p className="text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-xl p-3">{error}</p>
+                  )}
+
+                  <button
+                    disabled={submitting || !file}
                     className="w-full bg-rose-500 text-white py-4 rounded-2xl font-bold text-lg hover:bg-rose-600 transition-all disabled:opacity-50 shadow-lg shadow-rose-100 flex items-center justify-center gap-3"
                   >
                     {submitting ? (
                       <>
                         <i className="fa-solid fa-spinner fa-spin"></i>
-                        Verifying...
+                        Uploading...
                       </>
                     ) : (
                       'Submit for Review'

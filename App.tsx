@@ -1,75 +1,151 @@
 
-import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { User, Submission, AppState } from './types';
-import { INITIAL_USER, TASKS, REWARDS } from './constants';
+import React, { useState, useEffect, useCallback } from 'react';
+import type { Session } from '@supabase/supabase-js';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { User, Task, Reward, Submission } from './types';
+import { supabase } from './services/supabaseClient';
+import { compressImage } from './services/image';
 import Dashboard from './components/Dashboard';
 import TasksView from './components/TasksView';
 import RewardsView from './components/RewardsView';
 import AdminPanel from './components/AdminPanel';
+import Auth from './components/Auth';
+
+const mapSubmission = (row: any): Submission => ({
+  id: row.id,
+  userId: row.user_id,
+  taskId: row.task_id,
+  taskTitle: row.task_title,
+  proofNote: row.proof_note,
+  proofImagePath: row.proof_image_path,
+  timestamp: row.created_at,
+  status: row.status,
+  pointsAwarded: row.points_awarded,
+});
 
 const App: React.FC = () => {
-  const [state, setState] = useState<AppState>(() => {
-    const saved = localStorage.getItem('lotus_state');
-    if (saved) return JSON.parse(saved);
-    return {
-      user: INITIAL_USER,
-      tasks: TASKS,
-      rewards: REWARDS,
-      submissions: []
-    };
-  });
-
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
+  const [profile, setProfile] = useState<User | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [rewards, setRewards] = useState<Reward[]>([]);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem('lotus_state', JSON.stringify(state));
-  }, [state]);
-
-  const addSubmission = (submission: Submission) => {
-    setState(prev => ({
-      ...prev,
-      submissions: [submission, ...prev.submissions]
-    }));
-  };
-
-  const updateSubmissionStatus = (id: string, status: 'approved' | 'rejected') => {
-    setState(prev => {
-      const submission = prev.submissions.find(s => s.id === id);
-      if (!submission) return prev;
-      
-      let newPoints = prev.user.points;
-      if (status === 'approved' && submission.status !== 'approved') {
-        newPoints += submission.pointsAwarded;
-      } else if (status === 'rejected' && submission.status === 'approved') {
-        newPoints -= submission.pointsAwarded;
-      }
-
-      return {
-        ...prev,
-        user: { ...prev.user, points: newPoints },
-        submissions: prev.submissions.map(s => s.id === id ? { ...s, status } : s)
-      };
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
     });
-  };
+    return () => listener.subscription.unsubscribe();
+  }, []);
 
-  const manualPointsUpdate = (amount: number) => {
-    setState(prev => ({
-      ...prev,
-      user: { ...prev.user, points: Math.max(0, prev.user.points + amount) }
-    }));
-  };
+  const refetchProfile = useCallback(async (userId: string) => {
+    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+    setProfile(data as User | null);
+  }, []);
 
-  const claimReward = (cost: number) => {
-    if (state.user.points >= cost) {
-      setState(prev => ({
-        ...prev,
-        user: { ...prev.user, points: prev.user.points - cost }
-      }));
-      return true;
+  const refetchSubmissions = useCallback(async () => {
+    const { data } = await supabase.from('submissions').select('*').order('created_at', { ascending: false });
+    setSubmissions((data ?? []).map(mapSubmission));
+  }, []);
+
+  useEffect(() => {
+    if (!session) {
+      setProfile(null);
+      setTasks([]);
+      setRewards([]);
+      setSubmissions([]);
+      return;
     }
-    return false;
+
+    let cancelled = false;
+    setLoadingData(true);
+
+    (async () => {
+      const [{ data: profileData }, { data: taskData }, { data: rewardData }, { data: submissionData }] =
+        await Promise.all([
+          supabase.from('profiles').select('*').eq('id', session.user.id).single(),
+          supabase.from('tasks').select('*').eq('active', true),
+          supabase.from('rewards').select('*'),
+          supabase.from('submissions').select('*').order('created_at', { ascending: false }),
+        ]);
+
+      if (cancelled) return;
+      setProfile(profileData as User | null);
+      setTasks((taskData ?? []) as Task[]);
+      setRewards((rewardData ?? []) as Reward[]);
+      setSubmissions((submissionData ?? []).map(mapSubmission));
+      setLoadingData(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
+  const addSubmission = async (task: Task, file: File, note: string) => {
+    if (!session) return;
+    const userId = session.user.id;
+    const compressed = await compressImage(file);
+    const path = `${userId}/${crypto.randomUUID()}.jpg`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('proof-photos')
+      .upload(path, compressed, { contentType: 'image/jpeg' });
+    if (uploadError) throw uploadError;
+
+    const { error: insertError } = await supabase.from('submissions').insert({
+      user_id: userId,
+      task_id: task.id,
+      task_title: task.title,
+      proof_note: note || null,
+      proof_image_path: path,
+      points_awarded: task.points,
+    });
+    if (insertError) throw insertError;
+
+    await refetchSubmissions();
   };
+
+  const updateSubmissionStatus = async (id: string, status: 'approved' | 'rejected') => {
+    const { error } = await supabase.rpc('approve_submission', { p_submission_id: id, p_decision: status });
+    if (error) throw error;
+    await refetchSubmissions();
+    if (session) await refetchProfile(session.user.id);
+  };
+
+  const claimReward = async (rewardId: string): Promise<{ ok: boolean; message?: string }> => {
+    const { error } = await supabase.rpc('claim_reward', { p_reward_id: rewardId });
+    if (error) return { ok: false, message: error.message };
+    if (session) await refetchProfile(session.user.id);
+    return { ok: true };
+  };
+
+  const refreshOwnProfile = async () => {
+    if (session) await refetchProfile(session.user.id);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  if (session === undefined) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-400">Loading...</div>;
+  }
+
+  if (!session) {
+    return <Auth />;
+  }
+
+  if (loadingData || !profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-400">
+        Setting up your account...
+      </div>
+    );
+  }
+
+  const isAdmin = profile.role === 'admin';
 
   return (
     <HashRouter>
@@ -83,7 +159,7 @@ const App: React.FC = () => {
                 </div>
                 <span className="text-2xl font-serif font-bold text-slate-800 tracking-tight">Lotus</span>
               </div>
-              
+
               <div className="hidden md:flex items-center space-x-8">
                 <Link to="/" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">Dashboard</Link>
                 <Link to="/tasks" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">Tasks</Link>
@@ -93,17 +169,19 @@ const App: React.FC = () => {
 
               <div className="flex items-center gap-4">
                 <div className="flex items-center bg-rose-50 px-4 py-2 rounded-full border border-rose-100 shadow-sm">
-                  <span className="text-rose-600 font-bold mr-2">{state.user.points}</span>
+                  <span className="text-rose-600 font-bold mr-2">{profile.points}</span>
                   <i className="fa-solid fa-leaf text-rose-400"></i>
                 </div>
-                <button 
-                  onClick={() => setIsAdmin(!isAdmin)}
-                  className={`p-2 rounded-lg transition-all ${isAdmin ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
-                  title="Switch to Admin Mode"
+                <button
+                  onClick={handleSignOut}
+                  className="p-2 rounded-lg bg-slate-100 text-slate-400 hover:bg-slate-200 transition-all"
+                  title="Sign out"
                 >
-                  <i className={`fa-solid ${isAdmin ? 'fa-user-shield' : 'fa-user'}`}></i>
+                  <i className="fa-solid fa-right-from-bracket"></i>
                 </button>
-                <img src={state.user.avatar} className="w-9 h-9 rounded-full ring-2 ring-rose-200" alt="Avatar" />
+                {profile.avatar && (
+                  <img src={profile.avatar} className="w-9 h-9 rounded-full ring-2 ring-rose-200" alt="Avatar" />
+                )}
               </div>
             </div>
           </div>
@@ -111,18 +189,20 @@ const App: React.FC = () => {
 
         <main className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
           <Routes>
-            <Route path="/" element={<Dashboard state={state} />} />
-            <Route path="/tasks" element={<TasksView tasks={state.tasks} onAddSubmission={addSubmission} />} />
-            <Route path="/rewards" element={<RewardsView rewards={state.rewards} points={state.user.points} onClaim={claimReward} />} />
-            <Route 
-              path="/admin" 
+            <Route path="/" element={<Dashboard profile={profile} submissions={submissions} />} />
+            <Route path="/tasks" element={<TasksView tasks={tasks} onAddSubmission={addSubmission} />} />
+            <Route
+              path="/rewards"
+              element={<RewardsView rewards={rewards} points={profile.points} onClaim={claimReward} />}
+            />
+            <Route
+              path="/admin"
               element={
                 isAdmin ? (
-                  <AdminPanel 
-                    submissions={state.submissions} 
-                    onUpdateStatus={updateSubmissionStatus} 
-                    onManualUpdate={manualPointsUpdate}
-                    user={state.user}
+                  <AdminPanel
+                    submissions={submissions}
+                    onUpdateStatus={updateSubmissionStatus}
+                    onPointsAdjusted={refreshOwnProfile}
                   />
                 ) : (
                   <div className="text-center py-20">
@@ -130,7 +210,7 @@ const App: React.FC = () => {
                     <p>You must be an administrator to view this page.</p>
                   </div>
                 )
-              } 
+              }
             />
           </Routes>
         </main>
