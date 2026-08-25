@@ -16,6 +16,7 @@ const AdminPanel: React.FC<Props> = ({ submissions, onUpdateStatus, onPointsAdju
   const [adjusting, setAdjusting] = useState(false);
   const [reviewingId, setReviewingId] = useState<string | null>(null);
   const [imageUrls, setImageUrls] = useState<{ [path: string]: string }>({});
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const pendingSubmissions = submissions.filter(s => s.status === 'pending');
 
@@ -51,9 +52,12 @@ const AdminPanel: React.FC<Props> = ({ submissions, onUpdateStatus, onPointsAdju
 
   const handleReview = async (id: string, status: 'approved' | 'rejected') => {
     setReviewingId(id);
+    setActionError(null);
     try {
       await onUpdateStatus(id, status);
       await loadProfiles();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to update this submission.');
     } finally {
       setReviewingId(null);
     }
@@ -65,12 +69,15 @@ const AdminPanel: React.FC<Props> = ({ submissions, onUpdateStatus, onPointsAdju
     if (!selectedUserId || isNaN(val)) return;
 
     setAdjusting(true);
+    setActionError(null);
     try {
       const { error } = await supabase.rpc('adjust_points', { p_user_id: selectedUserId, p_amount: val });
       if (error) throw error;
       setManualAmount('');
       await loadProfiles();
       await onPointsAdjusted();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to adjust points.');
     } finally {
       setAdjusting(false);
     }
@@ -86,6 +93,12 @@ const AdminPanel: React.FC<Props> = ({ submissions, onUpdateStatus, onPointsAdju
         <h1 className="text-4xl font-serif font-bold text-slate-800">Admin Conservatory</h1>
         <p className="text-slate-500 mt-2">Oversee the growth of the community.</p>
       </header>
+
+      {actionError && (
+        <div className="p-4 rounded-2xl bg-rose-50 text-rose-700 border border-rose-100 text-sm font-semibold">
+          {actionError}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
