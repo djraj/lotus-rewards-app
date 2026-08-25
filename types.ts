@@ -15,6 +15,7 @@ export interface Reward {
   cost: number;
   image: string | null;
   available: boolean;
+  category: 'Products' | 'Sessions' | 'Workshops' | 'Reviews';
 }
 
 export interface Submission {
@@ -23,10 +24,23 @@ export interface Submission {
   taskId: string;
   taskTitle: string;
   proofNote: string | null;
-  proofImagePath: string;
+  proofImagePath: string | null;
   timestamp: string;
-  status: 'pending' | 'approved' | 'rejected';
+  updatedAt: string;
+  status: 'draft' | 'pending' | 'approved' | 'rejected';
   pointsAwarded: number;
+}
+
+export interface RewardClaim {
+  id: string;
+  userId: string;
+  rewardId: string;
+  rewardTitle: string;
+  cost: number;
+  status: 'pending' | 'approved' | 'rejected';
+  remark: string | null;
+  grantedBy: string | null;
+  timestamp: string;
 }
 
 export interface User {

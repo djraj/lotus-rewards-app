@@ -1,22 +1,39 @@
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Submission } from '../types';
+import { User, Submission, Reward } from '../types';
 import { getDailyQuote } from '../constants';
+import TaskSubmissionModal from './TaskSubmissionModal';
 
 interface Props {
   profile: User;
   submissions: Submission[];
+  rewards: Reward[];
+  onSaveDraft: (submission: Submission, file: File | null, note: string) => Promise<void>;
+  onSubmitDraft: (submission: Submission, file: File | null, note: string) => Promise<void>;
 }
 
-const Dashboard: React.FC<Props> = ({ profile, submissions }) => {
+const STATUS_STYLE: Record<Submission['status'], { bg: string; text: string; icon: string; label: string }> = {
+  draft: { bg: 'bg-slate-100', text: 'text-slate-500', icon: 'fa-pen', label: 'Draft' },
+  pending: { bg: 'bg-amber-100', text: 'text-amber-600', icon: 'fa-hourglass', label: 'Pending' },
+  approved: { bg: 'bg-emerald-100', text: 'text-emerald-600', icon: 'fa-check', label: 'Approved' },
+  rejected: { bg: 'bg-rose-100', text: 'text-rose-600', icon: 'fa-xmark', label: 'Rejected' },
+};
+
+const Dashboard: React.FC<Props> = ({ profile, submissions, rewards, onSaveDraft, onSubmitDraft }) => {
+  const [activeDraft, setActiveDraft] = useState<Submission | null>(null);
+
   const stats = [
     { label: 'Lotus Points', value: profile.points, icon: 'fa-leaf', color: 'text-rose-500', bg: 'bg-rose-50' },
     { label: 'Completed Tasks', value: submissions.filter(s => s.status === 'approved').length, icon: 'fa-check-double', color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { label: 'Pending Reviews', value: submissions.filter(s => s.status === 'pending').length, icon: 'fa-clock', color: 'text-amber-500', bg: 'bg-amber-50' },
   ];
 
   const recentActivity = submissions.slice(0, 5);
+
+  const nextReward = useMemo(() => {
+    const unaffordable = rewards.filter(r => r.cost > profile.points).sort((a, b) => a.cost - b.cost);
+    return unaffordable[0] ?? null;
+  }, [rewards, profile.points]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
@@ -31,7 +48,7 @@ const Dashboard: React.FC<Props> = ({ profile, submissions }) => {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {stats.map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
             <div className={`w-14 h-14 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center text-2xl`}>
@@ -53,33 +70,33 @@ const Dashboard: React.FC<Props> = ({ profile, submissions }) => {
           </h3>
           {recentActivity.length > 0 ? (
             <div className="space-y-4">
-              {recentActivity.map((sub) => (
-                <div key={sub.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      sub.status === 'approved' ? 'bg-emerald-100 text-emerald-600' :
-                      sub.status === 'rejected' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'
-                    }`}>
-                      <i className={`fa-solid ${
-                        sub.status === 'approved' ? 'fa-check' :
-                        sub.status === 'rejected' ? 'fa-xmark' : 'fa-hourglass'
-                      }`}></i>
+              {recentActivity.map((sub) => {
+                const style = STATUS_STYLE[sub.status];
+                const isDraft = sub.status === 'draft';
+                return (
+                  <div
+                    key={sub.id}
+                    onClick={isDraft ? () => setActiveDraft(sub) : undefined}
+                    className={`flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 ${isDraft ? 'cursor-pointer hover:border-rose-200 transition-colors' : ''}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${style.bg} ${style.text}`}>
+                        <i className={`fa-solid ${style.icon}`}></i>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-700">{sub.taskTitle}</p>
+                        <p className="text-xs text-slate-400">{new Date(sub.timestamp).toLocaleDateString()}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-slate-700">{sub.taskTitle}</p>
-                      <p className="text-xs text-slate-400">{new Date(sub.timestamp).toLocaleDateString()}</p>
+                    <div className="text-right">
+                      <span className={`text-sm font-bold ${sub.status === 'approved' ? 'text-emerald-600' : 'text-slate-400'}`}>
+                        {sub.status === 'approved' ? `+${sub.pointsAwarded}` : isDraft ? 'Continue' : '...'}
+                      </span>
+                      <p className={`text-[10px] uppercase tracking-wider font-bold ${style.text}`}>{style.label}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className={`text-sm font-bold ${
-                      sub.status === 'approved' ? 'text-emerald-600' : 'text-slate-400'
-                    }`}>
-                      {sub.status === 'approved' ? `+${sub.pointsAwarded}` : '...'}
-                    </span>
-                    <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400">{sub.status}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-12 text-slate-400">
@@ -93,25 +110,42 @@ const Dashboard: React.FC<Props> = ({ profile, submissions }) => {
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
           <div className="relative z-10">
             <h3 className="text-2xl font-serif font-bold mb-4">Achieve Your Potential</h3>
-            <p className="opacity-90 mb-6">Complete more tasks to unlock exclusive rewards like physical wellness journals and personalized coaching sessions.</p>
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6 mb-6">
-              <div className="flex justify-between text-sm mb-2">
-                <span>Next Milestone</span>
-                <span>{profile.points} / 500</span>
-              </div>
-              <div className="w-full bg-black/20 rounded-full h-2">
-                <div
-                  className="bg-white h-2 rounded-full transition-all duration-1000"
-                  style={{ width: `${Math.min(100, (profile.points / 500) * 100)}%` }}
-                ></div>
-              </div>
-            </div>
+            {nextReward ? (
+              <>
+                <p className="opacity-90 mb-6">
+                  Keep going — you're building toward <span className="font-bold">{nextReward.title}</span>.
+                </p>
+                <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6 mb-6">
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>{nextReward.title}</span>
+                    <span>{profile.points} / {nextReward.cost}</span>
+                  </div>
+                  <div className="w-full bg-black/20 rounded-full h-2">
+                    <div
+                      className="bg-white h-2 rounded-full transition-all duration-1000"
+                      style={{ width: `${Math.min(100, (profile.points / nextReward.cost) * 100)}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="opacity-90 mb-6">You already have enough points for every reward in the marketplace. Amazing work!</p>
+            )}
             <Link to="/tasks" className="inline-block bg-white text-rose-600 px-6 py-3 rounded-full font-bold hover:shadow-lg transition-all active:scale-95">
               Explore Tasks
             </Link>
           </div>
         </section>
       </div>
+
+      {activeDraft && (
+        <TaskSubmissionModal
+          submission={activeDraft}
+          onClose={() => setActiveDraft(null)}
+          onSave={(file, note) => onSaveDraft(activeDraft, file, note)}
+          onSubmit={(file, note) => onSubmitDraft(activeDraft, file, note)}
+        />
+      )}
     </div>
   );
 };
