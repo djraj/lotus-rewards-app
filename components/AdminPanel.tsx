@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Submission, User, RewardClaim, Reward } from '../types';
 import { supabase } from '../services/supabaseClient';
 
@@ -194,9 +195,18 @@ const AdminPanel: React.FC<Props> = ({ rewards, onUpdateStatus, onPointsAdjusted
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <header>
-        <h1 className="text-4xl font-serif font-bold text-slate-800">Admin Conservatory</h1>
-        <p className="text-slate-500 mt-2">Oversee the growth of the community.</p>
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-serif font-bold text-slate-800">Admin Conservatory</h1>
+          <p className="text-slate-500 mt-2">Oversee the growth of the community.</p>
+        </div>
+        <Link
+          to="/admin/history"
+          className="inline-flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm font-semibold text-slate-600 hover:text-rose-500 hover:border-rose-200 transition-colors"
+        >
+          <i className="fa-solid fa-clock-rotate-left"></i>
+          View Full History
+        </Link>
       </header>
 
       {actionError && (

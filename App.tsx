@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard';
 import TasksView from './components/TasksView';
 import RewardsView from './components/RewardsView';
 import AdminPanel from './components/AdminPanel';
+import AdminHistory from './components/AdminHistory';
 import Auth from './components/Auth';
 
 const mapSubmission = (row: any): Submission => ({
@@ -219,6 +220,7 @@ const App: React.FC = () => {
                 <Link to="/tasks" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">Tasks</Link>
                 <Link to="/rewards" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">Rewards</Link>
                 {isAdmin && <Link to="/admin" className="text-rose-600 font-bold">Admin</Link>}
+                {isAdmin && <Link to="/admin/history" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">History</Link>}
               </div>
 
               <div className="flex items-center gap-4">
@@ -288,6 +290,19 @@ const App: React.FC = () => {
                 )
               }
             />
+            <Route
+              path="/admin/history"
+              element={
+                isAdmin ? (
+                  <AdminHistory />
+                ) : (
+                  <div className="text-center py-20">
+                    <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+                    <p>You must be an administrator to view this page.</p>
+                  </div>
+                )
+              }
+            />
           </Routes>
         </main>
 
@@ -315,6 +330,12 @@ const App: React.FC = () => {
             <Link to="/admin" className="flex flex-col items-center gap-1 text-rose-500 font-bold">
               <i className="fa-solid fa-shield-halved"></i>
               <span className="text-[10px]">Admin</span>
+            </Link>
+          )}
+          {isAdmin && (
+            <Link to="/admin/history" className="flex flex-col items-center gap-1 text-slate-500">
+              <i className="fa-solid fa-clock-rotate-left"></i>
+              <span className="text-[10px]">History</span>
             </Link>
           )}
         </div>
