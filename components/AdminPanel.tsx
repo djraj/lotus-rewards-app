@@ -13,6 +13,7 @@ const AdminPanel: React.FC<Props> = ({ submissions, onUpdateStatus, onPointsAdju
   const [profiles, setProfiles] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [manualAmount, setManualAmount] = useState<string>('');
+  const [manualRemark, setManualRemark] = useState<string>('');
   const [adjusting, setAdjusting] = useState(false);
   const [reviewingId, setReviewingId] = useState<string | null>(null);
   const [imageUrls, setImageUrls] = useState<{ [path: string]: string }>({});
@@ -66,14 +67,19 @@ const AdminPanel: React.FC<Props> = ({ submissions, onUpdateStatus, onPointsAdju
   const handleManualPoints = async (e: React.FormEvent) => {
     e.preventDefault();
     const val = parseInt(manualAmount, 10);
-    if (!selectedUserId || isNaN(val)) return;
+    if (!selectedUserId || isNaN(val) || !manualRemark.trim()) return;
 
     setAdjusting(true);
     setActionError(null);
     try {
-      const { error } = await supabase.rpc('adjust_points', { p_user_id: selectedUserId, p_amount: val });
+      const { error } = await supabase.rpc('adjust_points', {
+        p_user_id: selectedUserId,
+        p_amount: val,
+        p_remark: manualRemark.trim(),
+      });
       if (error) throw error;
       setManualAmount('');
+      setManualRemark('');
       await loadProfiles();
       await onPointsAdjusted();
     } catch (err) {
@@ -209,8 +215,18 @@ const AdminPanel: React.FC<Props> = ({ submissions, onUpdateStatus, onPointsAdju
                   onChange={(e) => setManualAmount(e.target.value)}
                 />
               </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Remark (required)</label>
+                <textarea
+                  required
+                  placeholder="Why is this adjustment being made?"
+                  className="w-full h-20 bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none resize-none"
+                  value={manualRemark}
+                  onChange={(e) => setManualRemark(e.target.value)}
+                ></textarea>
+              </div>
               <button
-                disabled={adjusting || !selectedUserId}
+                disabled={adjusting || !selectedUserId || !manualAmount || !manualRemark.trim()}
                 className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition-all disabled:opacity-50"
               >
                 {adjusting ? 'Updating...' : 'Update Balance'}
