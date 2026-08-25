@@ -1,50 +1,33 @@
 
-import React, { useState, useEffect } from 'react';
-// Added missing Link import to fix name errors
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { AppState } from '../types';
-import { getDailyInspiration } from '../services/geminiService';
+import { User, Submission } from '../types';
+import { getDailyQuote } from '../constants';
 
 interface Props {
-  state: AppState;
+  profile: User;
+  submissions: Submission[];
 }
 
-const Dashboard: React.FC<Props> = ({ state }) => {
-  const [inspiration, setInspiration] = useState<string>('Loading mindfulness thoughts...');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchInspiration = async () => {
-      setLoading(true);
-      const text = await getDailyInspiration(state.user.points);
-      setInspiration(text);
-      setLoading(false);
-    };
-    fetchInspiration();
-  }, [state.user.points]);
-
+const Dashboard: React.FC<Props> = ({ profile, submissions }) => {
   const stats = [
-    { label: 'Lotus Points', value: state.user.points, icon: 'fa-leaf', color: 'text-rose-500', bg: 'bg-rose-50' },
-    { label: 'Completed Tasks', value: state.submissions.filter(s => s.status === 'approved').length, icon: 'fa-check-double', color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { label: 'Pending Reviews', value: state.submissions.filter(s => s.status === 'pending').length, icon: 'fa-clock', color: 'text-amber-500', bg: 'bg-amber-50' },
+    { label: 'Lotus Points', value: profile.points, icon: 'fa-leaf', color: 'text-rose-500', bg: 'bg-rose-50' },
+    { label: 'Completed Tasks', value: submissions.filter(s => s.status === 'approved').length, icon: 'fa-check-double', color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { label: 'Pending Reviews', value: submissions.filter(s => s.status === 'pending').length, icon: 'fa-clock', color: 'text-amber-500', bg: 'bg-amber-50' },
   ];
 
-  const recentActivity = state.submissions.slice(0, 5);
+  const recentActivity = submissions.slice(0, 5);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-serif font-bold text-slate-800">Welcome back, {state.user.name}</h1>
+          <h1 className="text-4xl font-serif font-bold text-slate-800">Welcome back, {profile.name}</h1>
           <p className="text-slate-500 mt-2">Your journey to wellness continues today.</p>
         </div>
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 max-w-md italic text-slate-600 relative overflow-hidden group">
           <div className="absolute top-0 left-0 w-1 h-full bg-rose-300"></div>
-          {loading ? (
-            <div className="h-4 w-32 bg-slate-100 animate-pulse rounded"></div>
-          ) : (
-            <p className="relative z-10">"{inspiration}"</p>
-          )}
+          <p className="relative z-10">"{getDailyQuote()}"</p>
         </div>
       </header>
 
@@ -74,11 +57,11 @@ const Dashboard: React.FC<Props> = ({ state }) => {
                 <div key={sub.id} className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      sub.status === 'approved' ? 'bg-emerald-100 text-emerald-600' : 
+                      sub.status === 'approved' ? 'bg-emerald-100 text-emerald-600' :
                       sub.status === 'rejected' ? 'bg-rose-100 text-rose-600' : 'bg-amber-100 text-amber-600'
                     }`}>
                       <i className={`fa-solid ${
-                        sub.status === 'approved' ? 'fa-check' : 
+                        sub.status === 'approved' ? 'fa-check' :
                         sub.status === 'rejected' ? 'fa-xmark' : 'fa-hourglass'
                       }`}></i>
                     </div>
@@ -114,16 +97,15 @@ const Dashboard: React.FC<Props> = ({ state }) => {
             <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6 mb-6">
               <div className="flex justify-between text-sm mb-2">
                 <span>Next Milestone</span>
-                <span>{state.user.points} / 500</span>
+                <span>{profile.points} / 500</span>
               </div>
               <div className="w-full bg-black/20 rounded-full h-2">
-                <div 
-                  className="bg-white h-2 rounded-full transition-all duration-1000" 
-                  style={{ width: `${Math.min(100, (state.user.points / 500) * 100)}%` }}
+                <div
+                  className="bg-white h-2 rounded-full transition-all duration-1000"
+                  style={{ width: `${Math.min(100, (profile.points / 500) * 100)}%` }}
                 ></div>
               </div>
             </div>
-            {/* Using Link from react-router-dom as imported above */}
             <Link to="/tasks" className="inline-block bg-white text-rose-600 px-6 py-3 rounded-full font-bold hover:shadow-lg transition-all active:scale-95">
               Explore Tasks
             </Link>
