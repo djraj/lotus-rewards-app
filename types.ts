@@ -15,6 +15,7 @@ export interface Reward {
   cost: number;
   image: string | null;
   available: boolean;
+  category: 'Products' | 'Sessions' | 'Workshops' | 'Reviews';
 }
 
 export interface Submission {

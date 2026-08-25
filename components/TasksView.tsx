@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Task } from '../types';
 
 interface Props {
@@ -9,7 +9,10 @@ interface Props {
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB, compressed further before upload
 
+const CATEGORY_ORDER: Task['category'][] = ['Referral', 'Service', 'Content', 'Coordination'];
+
 const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
+  const [search, setSearch] = useState('');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -17,6 +20,17 @@ const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const groupedTasks = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    const filtered = query
+      ? tasks.filter(t => t.title.toLowerCase().includes(query) || t.description.toLowerCase().includes(query))
+      : tasks;
+
+    return CATEGORY_ORDER
+      .map(category => ({ category, items: filtered.filter(t => t.category === category) }))
+      .filter(group => group.items.length > 0);
+  }, [tasks, search]);
 
   const closeModal = () => {
     setSelectedTask(null);
@@ -74,32 +88,57 @@ const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
         <p className="text-slate-500 mt-2">Earn Lotus Points by investing in yourself.</p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tasks.map((task) => (
-          <div key={task.id} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors duration-300">
-                <i className={`fa-solid ${task.icon} text-xl`}></i>
-              </div>
-              <span className="bg-rose-50 text-rose-600 text-xs font-bold px-3 py-1 rounded-full">{task.category}</span>
-            </div>
-            <h3 className="text-xl font-bold text-slate-800 mb-2">{task.title}</h3>
-            <p className="text-slate-500 text-sm flex-grow">{task.description}</p>
-            <div className="mt-6 flex items-center justify-between">
-              <div className="flex items-center gap-1 text-rose-500 font-bold">
-                <i className="fa-solid fa-leaf text-sm"></i>
-                <span>{task.points}</span>
-              </div>
-              <button
-                onClick={() => setSelectedTask(task)}
-                className="bg-slate-900 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-slate-800 transition-colors active:scale-95"
-              >
-                Start Task
-              </button>
-            </div>
-          </div>
-        ))}
+      <div className="relative">
+        <i className="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search tasks..."
+          className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-200 transition-all"
+        />
       </div>
+
+      {groupedTasks.length > 0 ? (
+        <div className="space-y-10">
+          {groupedTasks.map(({ category, items }) => (
+            <section key={category}>
+              <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+                {category}
+                <span className="text-xs font-medium text-slate-400">({items.length})</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {items.map((task) => (
+                  <div key={task.id} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col group">
+                    <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors duration-300 mb-4">
+                      <i className={`fa-solid ${task.icon} text-xl`}></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-800 mb-2">{task.title}</h3>
+                    <p className="text-slate-500 text-sm flex-grow">{task.description}</p>
+                    <div className="mt-6 flex items-center justify-between">
+                      <div className="flex items-center gap-1 text-rose-500 font-bold">
+                        <i className="fa-solid fa-leaf text-sm"></i>
+                        <span>{task.points}</span>
+                      </div>
+                      <button
+                        onClick={() => setSelectedTask(task)}
+                        className="bg-slate-900 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-slate-800 transition-colors active:scale-95"
+                      >
+                        Start Task
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-16 text-slate-400">
+          <i className="fa-solid fa-magnifying-glass text-4xl mb-3 block opacity-20"></i>
+          <p>No tasks match "{search}".</p>
+        </div>
+      )}
 
       {selectedTask && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
