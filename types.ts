@@ -22,7 +22,8 @@ export interface Submission {
   userId: string;
   taskId: string;
   taskTitle: string;
-  proof: string;
+  proofNote: string | null;
+  proofImagePath: string;
   timestamp: string;
   status: 'pending' | 'approved' | 'rejected';
   pointsAwarded: number;
@@ -31,14 +32,7 @@ export interface Submission {
 export interface User {
   id: string;
   name: string;
-  avatar: string;
+  avatar: string | null;
   points: number;
   role: 'user' | 'admin';
-}
-
-export interface AppState {
-  user: User;
-  tasks: Task[];
-  rewards: Reward[];
-  submissions: Submission[];
 }

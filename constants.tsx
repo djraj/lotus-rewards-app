@@ -1,88 +1,23 @@
 
-import { Task, Reward, User } from './types';
+// Tasks, rewards, and users now live in Supabase (see supabase/migrations).
+// This file only holds data that has no reason to be in the database.
 
-export const INITIAL_USER: User = {
-  id: 'u1',
-  name: 'Alex Rivera',
-  avatar: 'https://picsum.photos/seed/alex/200',
-  points: 150,
-  role: 'user',
+export const ZEN_QUOTES: string[] = [
+  'The journey of a thousand miles begins with a single step.',
+  'Wherever you are, be there totally.',
+  'Peace comes from within. Do not seek it without.',
+  'The quieter you become, the more you can hear.',
+  'Growth is a spiral process, doubling back on itself, reassessing and regrouping.',
+  'You are the sky. Everything else is just the weather.',
+  'Let go of who you think you are supposed to be; embrace who you are.',
+  'Every moment is a fresh beginning.',
+  'Small steps every day lead to big changes over time.',
+  'The present moment is the only moment available to us.',
+];
+
+export const getDailyQuote = (): string => {
+  const dayOfYear = Math.floor(
+    (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000
+  );
+  return ZEN_QUOTES[dayOfYear % ZEN_QUOTES.length];
 };
-
-export const TASKS: Task[] = [
-  {
-    id: 't1',
-    title: 'Morning Meditation',
-    description: 'Complete a 15-minute guided meditation session.',
-    points: 25,
-    icon: 'fa-om',
-    category: 'Mindfulness'
-  },
-  {
-    id: 't2',
-    title: 'Daily Journaling',
-    description: 'Write at least 300 words reflecting on your day.',
-    points: 15,
-    icon: 'fa-book-open',
-    category: 'Growth'
-  },
-  {
-    id: 't3',
-    title: 'Healthy Meal Prep',
-    description: 'Prepare a balanced meal with fresh ingredients.',
-    points: 30,
-    icon: 'fa-carrot',
-    category: 'Physical'
-  },
-  {
-    id: 't4',
-    title: 'Volunteer Hour',
-    description: 'Give back to your local community for one hour.',
-    points: 100,
-    icon: 'fa-hands-holding-heart',
-    category: 'Community'
-  },
-  {
-    id: 't5',
-    title: 'Nature Walk',
-    description: 'Spend 30 minutes walking in a park or forest.',
-    points: 20,
-    icon: 'fa-leaf',
-    category: 'Physical'
-  }
-];
-
-export const REWARDS: Reward[] = [
-  {
-    id: 'r1',
-    title: 'Premium Yoga Class',
-    description: 'A 60-minute private session with an instructor.',
-    cost: 500,
-    image: 'https://picsum.photos/seed/yoga/400/300',
-    available: true
-  },
-  {
-    id: 'r2',
-    title: 'Gratitude Journal',
-    description: 'A beautiful physical linen-bound journal.',
-    cost: 200,
-    image: 'https://picsum.photos/seed/journal/400/300',
-    available: true
-  },
-  {
-    id: 'r3',
-    title: '1-Month App Subscription',
-    description: 'Access to premium meditation and fitness tools.',
-    cost: 350,
-    image: 'https://picsum.photos/seed/app/400/300',
-    available: true
-  },
-  {
-    id: 'r4',
-    title: 'Plant a Tree',
-    description: 'We will plant a tree in your name in a reforestation area.',
-    cost: 150,
-    image: 'https://picsum.photos/seed/tree/400/300',
-    available: true
-  }
-];
