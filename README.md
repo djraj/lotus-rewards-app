@@ -13,30 +13,41 @@ See [`Docs/production-migration-plan.md`](Docs/production-migration-plan.md) for
 **Prerequisites:** Node.js 22+, a Supabase project.
 
 1. Install dependencies:
-   ```
+
+   ```bash
    npm install
    ```
+
 2. Create `.env` in the project root with:
-   ```
+
+   ```text
    VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co
    VITE_SUPABASE_ANON_KEY=<your-project-anon-key>
    DATABASE_PASS=<your-project-db-password>
    ```
+
    `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` are used by the app at build time. `DATABASE_PASS` is only used by the Supabase CLI (below), never shipped to the client.
+
 3. Link the Supabase CLI to your project and push the schema:
-   ```
+
+   ```bash
    npx supabase login
    npx supabase link --project-ref <your-project-ref>
    npx supabase db push
    ```
+
    This creates the `profiles`/`tasks`/`rewards`/`submissions`/`reward_claims` tables, RLS policies, the `proof-photos` storage bucket, and the RPC functions the app calls (`approve_submission`, `claim_reward`, `adjust_points`).
+
 4. Run the app:
-   ```
+
+   ```bash
    npm run dev
    ```
+
    Opens at `http://localhost:3000`.
 
 New signups default to `role: 'user'`. To make an account an admin, run in the Supabase SQL editor:
+
 ```sql
 update public.profiles set role = 'admin' where id = '<user-id>';
 ```
@@ -48,18 +59,12 @@ update public.profiles set role = 'admin' where id = '<user-id>';
 | `npm run dev` | Start the Vite dev server |
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Preview the production build locally |
-| `npm run predeploy` | Type-checks and builds — run this before pushing/deploying (see below) |
+| `npm run predeploy` | Alias for `npm run build` (kept for an explicit local "check before I push" habit) |
 
-## Before deploying
+## Type-checking is enforced on every build
 
-`npm run build` alone does **not** catch TypeScript errors — Vite transpiles with esbuild, which doesn't type-check, so a broken type can still produce a "successful" build. Run the full check first:
-
-```
-npm run predeploy
-```
-
-This runs `tsc --noEmit` followed by `vite build`, and exits non-zero if either step fails.
+Vite transpiles via esbuild, which doesn't type-check — `vite build` alone can still produce a "successful" build with a broken type in it. `npm run build` has a `prebuild` script that runs `tsc --noEmit` first and fails the whole command if it doesn't pass, so this isn't just a local convention: **Cloudflare's Workers Build runs `npm run build` too**, so a real type error now fails the actual deploy, not just a local check someone forgot to run.
 
 ## Deployment
 
-Deploys are handled by Cloudflare Workers Builds: pushing to `main` triggers `npm run build` then `npx wrangler versions upload`, using `wrangler.toml` to serve `dist/` as static assets. `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` must be set as **build** variables in the Cloudflare dashboard (Worker → Settings → Build → Variables and secrets — distinct from "Runtime variables and secrets", which doesn't apply to a static-assets-only Worker).
+Deploys are handled by Cloudflare Workers Builds: pushing to `main` triggers `npm run build` (type-check, then the Vite build) then `npx wrangler versions upload`, using `wrangler.toml` to serve `dist/` as static assets. `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` must be set as **build** variables in the Cloudflare dashboard (Worker → Settings → Build → Variables and secrets — distinct from "Runtime variables and secrets", which doesn't apply to a static-assets-only Worker).

@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run typecheck",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "predeploy": "npm run typecheck && npm run build"
+    "predeploy": "npm run build"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.4",
