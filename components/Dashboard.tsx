@@ -13,7 +13,6 @@ const Dashboard: React.FC<Props> = ({ profile, submissions }) => {
   const stats = [
     { label: 'Lotus Points', value: profile.points, icon: 'fa-leaf', color: 'text-rose-500', bg: 'bg-rose-50' },
     { label: 'Completed Tasks', value: submissions.filter(s => s.status === 'approved').length, icon: 'fa-check-double', color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { label: 'Pending Reviews', value: submissions.filter(s => s.status === 'pending').length, icon: 'fa-clock', color: 'text-amber-500', bg: 'bg-amber-50' },
   ];
 
   const recentActivity = submissions.slice(0, 5);
@@ -31,7 +30,7 @@ const Dashboard: React.FC<Props> = ({ profile, submissions }) => {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {stats.map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center gap-5 hover:shadow-md transition-shadow">
             <div className={`w-14 h-14 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center text-2xl`}>
