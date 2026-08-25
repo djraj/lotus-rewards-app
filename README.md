@@ -1,6 +1,6 @@
-# Lotus Rewards
+# Golden Lotus Rewards
 
-A zen-themed rewards app: users earn Lotus Points by completing mindful tasks (submitted with a photo as proof), redeem points for rewards, and admins review submissions and manage balances.
+A community rewards app: members earn Lotus Points by completing tasks (submitted with a photo as proof), redeem points for sessions/products/workshops/reviews, and admins review submissions and manage balances.
 
 - **Frontend**: React 19 + Vite + TypeScript + Tailwind (via CDN), React Router (`HashRouter`)
 - **Backend**: [Supabase](https://supabase.com) — Postgres, Auth (email/password + magic link), Row Level Security, Storage (proof photos), RPC functions for point mutations

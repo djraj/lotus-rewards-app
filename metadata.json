@@ -1,6 +1,6 @@
 {
-  "name": "Lotus Rewards App",
-  "description": "A zen-themed reward system where users earn Lotus Points for completing mindful activities. Features AI-powered proof verification and a beautiful dashboard for managing tasks and rewards.",
+  "name": "Golden Lotus Rewards App",
+  "description": "A community reward system where members earn Lotus Points for referrals, service, and workshop coordination, redeemable for sessions, products, workshops, and reviews.",
   "requestFramePermissions": [
     "camera"
   ]

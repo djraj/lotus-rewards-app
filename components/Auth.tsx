@@ -64,7 +64,7 @@ const Auth: React.FC = () => {
           <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-300 rounded-full flex items-center justify-center text-white text-xl shadow-lg">
             <i className="fa-solid fa-seedling"></i>
           </div>
-          <span className="text-2xl font-serif font-bold text-slate-800 tracking-tight">Lotus</span>
+          <span className="text-2xl font-serif font-bold text-slate-800 tracking-tight">Golden Lotus</span>
         </div>
 
         <h1 className="text-2xl font-bold text-slate-800 mb-1">
