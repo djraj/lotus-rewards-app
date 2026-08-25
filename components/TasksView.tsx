@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Task } from '../types';
 
 interface Props {
@@ -24,7 +24,15 @@ const TasksView: React.FC<Props> = ({ tasks, onAddSubmission }) => {
     setPreviewUrl(null);
     setNote('');
     setError(null);
+    setSuccess(false);
   };
+
+  // Revoke the previous blob URL whenever it's replaced or the component unmounts.
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const picked = e.target.files?.[0];
