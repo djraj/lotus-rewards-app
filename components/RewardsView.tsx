@@ -7,6 +7,7 @@ interface Props {
   points: number;
   myClaims: RewardClaim[];
   onRequestReward: (rewardId: string) => Promise<{ ok: boolean; message?: string }>;
+  isAdmin: boolean;
 }
 
 const CATEGORY_ORDER: Reward['category'][] = ['Products', 'Sessions', 'Workshops', 'Reviews'];
@@ -17,7 +18,7 @@ const CLAIM_STATUS_STYLE: Record<RewardClaim['status'], string> = {
   rejected: 'bg-rose-50 text-rose-600 border-rose-100',
 };
 
-const RewardsView: React.FC<Props> = ({ rewards, points, myClaims, onRequestReward }) => {
+const RewardsView: React.FC<Props> = ({ rewards, points, myClaims, onRequestReward, isAdmin }) => {
   const [search, setSearch] = useState('');
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
   const [confirmReward, setConfirmReward] = useState<Reward | null>(null);
@@ -47,7 +48,12 @@ const RewardsView: React.FC<Props> = ({ rewards, points, myClaims, onRequestRewa
     setConfirmReward(null);
 
     if (result.ok) {
-      setMessage({ text: `Your request for ${confirmReward.title} has been sent for admin approval.`, type: 'success' });
+      setMessage({
+        text: isAdmin
+          ? `Successfully redeemed ${confirmReward.title}!`
+          : `Your request for ${confirmReward.title} has been sent for admin approval.`,
+        type: 'success',
+      });
     } else {
       setMessage({ text: result.message ?? 'Could not send this request.', type: 'error' });
     }
@@ -176,11 +182,20 @@ const RewardsView: React.FC<Props> = ({ rewards, points, myClaims, onRequestRewa
           <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8">
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Confirm Redemption</h2>
             <p className="text-slate-500 mb-6">
-              This will deduct <span className="font-bold text-rose-600">{confirmReward.cost} Lotus Points</span> once
-              an admin approves your request for <span className="font-bold">{confirmReward.title}</span>.
+              {isAdmin ? (
+                <>
+                  This will immediately deduct <span className="font-bold text-rose-600">{confirmReward.cost} Lotus Points</span> to
+                  redeem <span className="font-bold">{confirmReward.title}</span>.
+                </>
+              ) : (
+                <>
+                  This will deduct <span className="font-bold text-rose-600">{confirmReward.cost} Lotus Points</span> once
+                  an admin approves your request for <span className="font-bold">{confirmReward.title}</span>.
+                </>
+              )}
             </p>
             <div className="bg-slate-50 rounded-2xl p-4 mb-6 flex items-center justify-between text-sm">
-              <span className="text-slate-500">Your balance after approval</span>
+              <span className="text-slate-500">{isAdmin ? 'Your balance after redemption' : 'Your balance after approval'}</span>
               <span className="font-bold text-slate-800">{points - confirmReward.cost} pts</span>
             </div>
             <div className="flex gap-3">

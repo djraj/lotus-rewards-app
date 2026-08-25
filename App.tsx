@@ -168,7 +168,10 @@ const App: React.FC = () => {
   const requestReward = async (rewardId: string): Promise<{ ok: boolean; message?: string }> => {
     const { error } = await supabase.rpc('request_reward', { p_reward_id: rewardId });
     if (error) return { ok: false, message: error.message };
-    if (session) await refetchRewardClaims(session.user.id);
+    if (session) {
+      await refetchRewardClaims(session.user.id);
+      await refetchProfile(session.user.id);
+    }
     return { ok: true };
   };
 
@@ -264,6 +267,7 @@ const App: React.FC = () => {
                   points={profile.points}
                   myClaims={rewardClaims}
                   onRequestReward={requestReward}
+                  isAdmin={isAdmin}
                 />
               }
             />
