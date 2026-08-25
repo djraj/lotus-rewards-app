@@ -60,7 +60,13 @@ const RewardsView: React.FC<Props> = ({ rewards, points, onClaim }) => {
           return (
             <div key={reward.id} className="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-slate-100 flex flex-col sm:flex-row h-full group hover:shadow-xl transition-all duration-300">
               <div className="sm:w-1/3 h-48 sm:h-auto relative overflow-hidden">
-                <img src={reward.image} alt={reward.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                {reward.image ? (
+                  <img src={reward.image} alt={reward.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                ) : (
+                  <div className="w-full h-full bg-rose-50 flex items-center justify-center text-rose-300 text-3xl">
+                    <i className="fa-solid fa-leaf"></i>
+                  </div>
+                )}
                 <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-rose-600 shadow-sm">
                   {reward.cost} Pts
                 </div>
