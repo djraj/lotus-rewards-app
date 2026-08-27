@@ -17,7 +17,7 @@ landed them on `main`.
   `PASSWORD_RECOVERY` auth event in `App.tsx`.
 - **Transactional notification emails** via a new `notify` Edge Function that
   calls the Brevo API, driven by Postgres triggers (migrations
-  `20260831000000`, `20260901000000`):
+  `20260831000000`, `20260901000000`, `20260902000000`):
   - task started (new draft submission)
   - task submitted (draft → pending)
   - task approved by an admin (→ approved)
@@ -26,6 +26,11 @@ landed them on `main`.
 - `private.email_config` table holding the function URL + a shared secret, so no
   credentials are committed; the triggers are silent no-ops until it is filled.
 - `Docs/email-setup.md` and `.env.example` covering the full Brevo setup.
+
+### Fixed
+- Webhook payload dropped `record`/`old_record` when the row had any NULL
+  column (`NEW IS NOT NULL` is only true when every field is non-null), so the
+  notify function skipped every event fired by a trigger (`20260902000000`).
 
 ### Changed
 - New signups now require email confirmation (`enable_confirmations = true`).
