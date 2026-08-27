@@ -11,6 +11,7 @@ import RewardsView from './components/RewardsView';
 import AdminPanel from './components/AdminPanel';
 import AdminHistory from './components/AdminHistory';
 import Auth from './components/Auth';
+import UpdatePassword from './components/UpdatePassword';
 
 const mapSubmission = (row: any): Submission => ({
   id: row.id,
@@ -39,6 +40,7 @@ const mapRewardClaim = (row: any): RewardClaim => ({
 
 const App: React.FC = () => {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  const [recovering, setRecovering] = useState(false);
   const [profile, setProfile] = useState<User | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [rewards, setRewards] = useState<Reward[]>([]);
@@ -48,7 +50,10 @@ const App: React.FC = () => {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
+      // Arrives when the user opens a password-reset link; show the
+      // set-a-new-password screen instead of the normal signed-in app.
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true);
       setSession(newSession);
     });
     return () => listener.subscription.unsubscribe();
@@ -183,6 +188,10 @@ const App: React.FC = () => {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
+
+  if (recovering) {
+    return <UpdatePassword onDone={() => setRecovering(false)} />;
+  }
 
   if (session === undefined) {
     return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-400">Loading...</div>;

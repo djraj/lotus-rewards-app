@@ -36,6 +36,26 @@ const Auth: React.FC = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setMessage({ text: 'Enter your email first, then tap "Forgot password".', type: 'error' });
+      return;
+    }
+    setLoading(true);
+    setMessage(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin,
+      });
+      if (error) throw error;
+      setMessage({ text: 'Password reset email sent — check your inbox.', type: 'success' });
+    } catch (err) {
+      setMessage({ text: err instanceof Error ? err.message : 'Something went wrong.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleMagicLink = async () => {
     if (!email) {
       setMessage({ text: 'Enter your email first.', type: 'error' });
@@ -119,6 +139,16 @@ const Auth: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="********"
             />
+            {mode === 'sign-in' && (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={loading}
+                className="text-xs text-rose-600 font-bold hover:underline mt-2 disabled:opacity-50"
+              >
+                Forgot password?
+              </button>
+            )}
           </div>
           <button
             disabled={loading}
