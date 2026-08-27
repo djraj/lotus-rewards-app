@@ -16,7 +16,7 @@
 //   SUPABASE_URL          - injected automatically on deploy
 //   SUPABASE_SERVICE_ROLE_KEY - injected automatically on deploy
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET") ?? "";
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY") ?? "";
