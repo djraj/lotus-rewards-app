@@ -9,6 +9,7 @@ Golden Lotus sends two kinds of mail:
 | **Password reset** | Supabase Auth → Brevo **SMTP** | "Forgot password?" on the login screen |
 | **Task started** | `notify` Edge Function → Brevo **API** | new draft submission |
 | **Task submitted** | `notify` Edge Function → Brevo **API** | draft → pending |
+| **Task approved** | `notify` Edge Function → Brevo **API** | submission → approved (admin) |
 | **Redeem successful** | `notify` Edge Function → Brevo **API** | reward request → approved |
 | **Reward sent (by admin)** | `notify` Edge Function → Brevo **API** | admin `send_reward` |
 
@@ -129,9 +130,11 @@ with email switched off.
    opens the "Choose a new password" screen.
 4. **Task started** — start any task → "Task started" mail.
 5. **Task submitted** — add a photo and submit → "Task submitted" mail.
-6. **Redeem successful** — request a reward as a user, approve it as an admin →
+6. **Task approved** — approve that submission as an admin → the user gets
+   "Task approved".
+7. **Redeem successful** — request a reward as a user, approve it as an admin →
    the user gets "Redeem successful".
-7. **Reward sent** — as an admin, *Send reward* to a user → that user gets
+8. **Reward sent** — as an admin, *Send reward* to a user → that user gets
    "Reward sent".
 
 Function logs: `supabase functions logs notify` (or the dashboard). Brevo's

@@ -64,6 +64,16 @@ function resolveMail(p: WebhookPayload): Mail | null {
         ctaLabel: "View my activity",
       };
     }
+    if (p.type === "UPDATE" && o.status !== "approved" && r.status === "approved") {
+      return {
+        subject: `Approved: ${r.task_title}`,
+        heading: "Task approved",
+        body:
+          `Nice work — your submission for <strong>${esc(r.task_title)}</strong> has been approved and ` +
+          `<strong>${r.points_awarded} Lotus Points</strong> have been added to your balance.`,
+        ctaLabel: "View my points",
+      };
+    }
   }
 
   if (p.table === "reward_claims") {

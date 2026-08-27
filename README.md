@@ -4,7 +4,7 @@ A community rewards app: members earn Lotus Points by completing tasks (submitte
 
 - **Frontend**: React 19 + Vite + TypeScript + Tailwind (via CDN), React Router (`HashRouter`)
 - **Backend**: [Supabase](https://supabase.com) — Postgres, Auth (email/password + magic link), Row Level Security, Storage (proof photos), RPC functions for point mutations
-- **Email**: [Brevo](https://www.brevo.com) — auth mail (magic link, signup confirmation, password reset) over SMTP; in-app notifications (task started/submitted, redeem approved, reward sent) via the `notify` Edge Function. Setup: [`Docs/email-setup.md`](Docs/email-setup.md)
+- **Email**: [Brevo](https://www.brevo.com) — auth mail (magic link, signup confirmation, password reset) over SMTP; in-app notifications (task started/submitted/approved, redeem approved, reward sent) via the `notify` Edge Function. Setup: [`Docs/email-setup.md`](Docs/email-setup.md)
 - **Hosting**: Cloudflare Workers (static assets), auto-deploys on push to `main` via Workers Builds
 
 See [`Docs/production-migration-plan.md`](Docs/production-migration-plan.md) for the full architecture, schema, and security model.
