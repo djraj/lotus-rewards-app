@@ -44,17 +44,17 @@ function resolveMail(p: WebhookPayload): Mail | null {
   const o = p.old_record ?? {};
 
   if (p.table === "submissions") {
-    if (p.type === "INSERT" && r.status === "draft") {
+    if (p.type === "INSERT" && r.status === "ongoing") {
       return {
         subject: `You started: ${r.task_title}`,
         heading: "Task started",
         body:
-          `You've started <strong>${esc(r.task_title)}</strong> as a draft. ` +
+          `You've started <strong>${esc(r.task_title)}</strong>. ` +
           `Add your proof photo and a note whenever you're ready, then submit it for review to earn ${r.points_awarded} Lotus Points.`,
-        ctaLabel: "Open my drafts",
+        ctaLabel: "Open my dashboard",
       };
     }
-    if (p.type === "UPDATE" && o.status === "draft" && r.status === "pending") {
+    if (p.type === "UPDATE" && o.status === "ongoing" && r.status === "pending") {
       return {
         subject: `Submitted for review: ${r.task_title}`,
         heading: "Task submitted",

@@ -19,7 +19,7 @@ const TasksView: React.FC<Props> = ({ tasks, submissions, onStartTask }) => {
 
   // Tasks the user has already started and not yet submitted.
   const ongoingTaskIds = useMemo(
-    () => new Set(submissions.filter(s => s.status === 'draft').map(s => s.taskId)),
+    () => new Set(submissions.filter(s => s.status === 'ongoing').map(s => s.taskId)),
     [submissions],
   );
 

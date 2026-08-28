@@ -70,7 +70,7 @@ const AdminPanel: React.FC<Props> = ({ rewards, onUpdateStatus, onPointsAdjusted
   };
 
   const loadSubmissions = async () => {
-    const { data } = await supabase.from('submissions').select('*').neq('status', 'draft').order('created_at', { ascending: false });
+    const { data } = await supabase.from('submissions').select('*').neq('status', 'ongoing').order('created_at', { ascending: false });
     setAllSubmissions((data ?? []).map(mapSubmission));
   };
 

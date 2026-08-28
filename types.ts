@@ -27,7 +27,7 @@ export interface Submission {
   proofImagePath: string | null;
   timestamp: string;
   updatedAt: string;
-  status: 'draft' | 'pending' | 'approved' | 'rejected';
+  status: 'ongoing' | 'pending' | 'approved' | 'rejected';
   pointsAwarded: number;
 }
 

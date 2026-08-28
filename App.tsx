@@ -120,17 +120,17 @@ const App: React.FC = () => {
     // One ongoing (draft) submission per task. If the user already started this
     // one and hasn't submitted it, don't create a second - they finish the
     // existing one from the Dashboard.
-    if (submissions.some(s => s.taskId === task.id && s.status === 'draft')) return;
+    if (submissions.some(s => s.taskId === task.id && s.status === 'ongoing')) return;
 
     const { error } = await supabase.from('submissions').insert({
       user_id: session.user.id,
       task_id: task.id,
       task_title: task.title,
       points_awarded: task.points,
-      status: 'draft',
+      status: 'ongoing',
     });
-    // 23505 = the one-open-draft-per-task unique index firing because a draft
-    // already exists (e.g. started in another tab). Harmless - just resync.
+    // 23505 = the one-ongoing-per-task unique index firing because one already
+    // exists (e.g. started in another tab). Harmless - just resync.
     if (error && error.code !== '23505') throw error;
     await refetchSubmissions(session.user.id);
   };

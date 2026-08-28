@@ -14,7 +14,7 @@ interface Props {
 }
 
 const STATUS_STYLE: Record<Submission['status'], { bg: string; text: string; icon: string; label: string }> = {
-  draft: { bg: 'bg-sky-100', text: 'text-sky-600', icon: 'fa-hourglass-half', label: 'Ongoing' },
+  ongoing: { bg: 'bg-sky-100', text: 'text-sky-600', icon: 'fa-hourglass-half', label: 'Ongoing' },
   pending: { bg: 'bg-amber-100', text: 'text-amber-600', icon: 'fa-hourglass', label: 'Pending' },
   approved: { bg: 'bg-emerald-100', text: 'text-emerald-600', icon: 'fa-check', label: 'Approved' },
   rejected: { bg: 'bg-rose-100', text: 'text-rose-600', icon: 'fa-xmark', label: 'Rejected' },
@@ -72,12 +72,12 @@ const Dashboard: React.FC<Props> = ({ profile, submissions, rewards, onSaveDraft
             <div className="space-y-4">
               {recentActivity.map((sub) => {
                 const style = STATUS_STYLE[sub.status];
-                const isDraft = sub.status === 'draft';
+                const isOngoing = sub.status === 'ongoing';
                 return (
                   <div
                     key={sub.id}
-                    onClick={isDraft ? () => setActiveDraft(sub) : undefined}
-                    className={`flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 ${isDraft ? 'cursor-pointer hover:border-rose-200 transition-colors' : ''}`}
+                    onClick={isOngoing ? () => setActiveDraft(sub) : undefined}
+                    className={`flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 ${isOngoing ? 'cursor-pointer hover:border-rose-200 transition-colors' : ''}`}
                   >
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center ${style.bg} ${style.text}`}>
@@ -90,7 +90,7 @@ const Dashboard: React.FC<Props> = ({ profile, submissions, rewards, onSaveDraft
                     </div>
                     <div className="text-right">
                       <span className={`text-sm font-bold ${sub.status === 'approved' ? 'text-emerald-600' : 'text-slate-400'}`}>
-                        {sub.status === 'approved' ? `+${sub.pointsAwarded}` : isDraft ? 'Continue' : '...'}
+                        {sub.status === 'approved' ? `+${sub.pointsAwarded}` : isOngoing ? 'Continue' : '...'}
                       </span>
                       <p className={`text-[10px] uppercase tracking-wider font-bold ${style.text}`}>{style.label}</p>
                     </div>
