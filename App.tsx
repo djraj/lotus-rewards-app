@@ -291,6 +291,7 @@ const App: React.FC = () => {
                 isAdmin ? (
                   <AdminPanel
                     rewards={rewards}
+                    currentUserId={session.user.id}
                     onUpdateStatus={updateSubmissionStatus}
                     onPointsAdjusted={refreshOwnProfile}
                   />
