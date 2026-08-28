@@ -435,3 +435,36 @@ enabled = true
 # declarative_schema_path = "./schemas"
 # JSON string passed through to pg-delta SQL formatting.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":80,\"commaStyle\":\"trailing\"}"
+
+# ---------------------------------------------------------------------------
+# Remote (hosted project) overrides.
+#
+# Everything in [auth] above is tuned for local `supabase start`. These blocks
+# deep-merge OVER that base only when `supabase config push` targets the linked
+# project ref below - so `supabase start` keeps using the localhost values while
+# the hosted project gets production-correct auth settings.
+#
+# Re-push after editing:  npx supabase config push
+# (add  --project-ref obwekimgjwkafgtccdre  if the overrides are not picked up)
+# ---------------------------------------------------------------------------
+[remotes.production]
+project_id = "obwekimgjwkafgtccdre"
+
+[remotes.production.auth]
+# Real deployed origin - used to build email links and as the post-auth redirect.
+site_url = "https://lotus-rewards-app.jariarud.workers.dev"
+additional_redirect_urls = [
+  "https://lotus-rewards-app.jariarud.workers.dev",
+  "https://lotus-rewards-app.jariarud.workers.dev/**",
+]
+
+[remotes.production.auth.email]
+# Throttle repeat confirmation / reset emails (local dev uses 1s for fast iteration).
+max_frequency = "60s"
+# Longer email OTP on prod.
+otp_length = 8
+
+[remotes.production.auth.mfa.totp]
+# App-authenticator MFA stays available on the hosted project.
+enroll_enabled = true
+verify_enabled = true
