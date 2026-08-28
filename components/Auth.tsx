@@ -11,6 +11,8 @@ const Auth: React.FC = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [otpSent, setOtpSent] = useState(false);
+  const [code, setCode] = useState('');
 
   const handlePasswordAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,12 +71,38 @@ const Auth: React.FC = () => {
         options: { emailRedirectTo: window.location.origin },
       });
       if (error) throw error;
-      setMessage({ text: 'Magic link sent — check your email.', type: 'success' });
+      setOtpSent(true);
+      setMessage({ text: `We sent a 6-8 digit code and a sign-in link to ${email}. Enter the code below, or just click the link in the email.`, type: 'success' });
     } catch (err) {
       setMessage({ text: err instanceof Error ? err.message : 'Something went wrong.', type: 'error' });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: code.trim(),
+        type: 'email',
+      });
+      if (error) throw error;
+      // On success, onAuthStateChange in App.tsx picks up the session and swaps the view.
+    } catch (err) {
+      setMessage({ text: err instanceof Error ? err.message : 'That code was not accepted.', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelOtp = () => {
+    setOtpSent(false);
+    setCode('');
+    setMessage(null);
   };
 
   return (
@@ -104,6 +132,42 @@ const Auth: React.FC = () => {
           </div>
         )}
 
+        {otpSent && (
+          <form onSubmit={handleVerifyCode} className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">Enter your code</label>
+              <input
+                required
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]*"
+                maxLength={8}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center text-lg tracking-[0.4em] focus:ring-2 focus:ring-rose-200 outline-none"
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                placeholder="123456"
+              />
+            </div>
+            <button
+              disabled={loading}
+              className="w-full bg-rose-500 text-white py-3 rounded-2xl font-bold hover:bg-rose-600 transition-all disabled:opacity-50"
+            >
+              {loading ? 'Verifying...' : 'Verify code'}
+            </button>
+            <button
+              type="button"
+              onClick={cancelOtp}
+              disabled={loading}
+              className="w-full text-sm text-slate-500 font-bold hover:underline disabled:opacity-50"
+            >
+              Use a different email
+            </button>
+          </form>
+        )}
+
+        {!otpSent && (
+        <>
         <form onSubmit={handlePasswordAuth} className="space-y-4">
           {mode === 'sign-up' && (
             <div>
@@ -172,6 +236,8 @@ const Auth: React.FC = () => {
           <i className="fa-solid fa-wand-magic-sparkles"></i>
           Send Magic Link
         </button>
+        </>
+        )}
 
         <p className="text-center text-sm text-slate-500 mt-6">
           {mode === 'sign-in' ? "Don't have an account? " : 'Already have an account? '}
