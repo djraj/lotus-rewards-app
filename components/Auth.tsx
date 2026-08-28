@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
+import { takeAuthError } from '../services/authCallback';
 
 type Mode = 'sign-in' | 'sign-up';
 
@@ -13,6 +14,13 @@ const Auth: React.FC = () => {
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const [otpSent, setOtpSent] = useState(false);
   const [code, setCode] = useState('');
+
+  // Surface the reason a magic link / auth redirect failed (e.g. an expired
+  // link), stashed by consumeAuthCallback before the app mounted.
+  useEffect(() => {
+    const err = takeAuthError();
+    if (err) setMessage({ text: err, type: 'error' });
+  }, []);
 
   const handlePasswordAuth = async (e: React.FormEvent) => {
     e.preventDefault();
