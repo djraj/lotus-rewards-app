@@ -114,22 +114,25 @@ const App: React.FC = () => {
     };
   }, [session]);
 
-  const startTask = async (task: Task): Promise<Submission> => {
+  const startTask = async (task: Task): Promise<void> => {
     if (!session) throw new Error('Not signed in');
-    const { data, error } = await supabase
-      .from('submissions')
-      .insert({
-        user_id: session.user.id,
-        task_id: task.id,
-        task_title: task.title,
-        points_awarded: task.points,
-        status: 'draft',
-      })
-      .select()
-      .single();
-    if (error) throw error;
+
+    // One ongoing (draft) submission per task. If the user already started this
+    // one and hasn't submitted it, don't create a second - they finish the
+    // existing one from the Dashboard.
+    if (submissions.some(s => s.taskId === task.id && s.status === 'ongoing')) return;
+
+    const { error } = await supabase.from('submissions').insert({
+      user_id: session.user.id,
+      task_id: task.id,
+      task_title: task.title,
+      points_awarded: task.points,
+      status: 'ongoing',
+    });
+    // 23505 = the one-ongoing-per-task unique index firing because one already
+    // exists (e.g. started in another tab). Harmless - just resync.
+    if (error && error.code !== '23505') throw error;
     await refetchSubmissions(session.user.id);
-    return mapSubmission(data);
   };
 
   const saveDraft = async (submission: Submission, file: File | null, note: string) => {
@@ -268,7 +271,7 @@ const App: React.FC = () => {
             />
             <Route
               path="/tasks"
-              element={<TasksView tasks={tasks} onStartTask={startTask} onSaveDraft={saveDraft} onSubmitDraft={submitDraft} />}
+              element={<TasksView tasks={tasks} submissions={submissions} onStartTask={startTask} />}
             />
             <Route
               path="/rewards"

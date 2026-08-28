@@ -31,8 +31,8 @@ const mapClaim = (row: any): RewardClaim => ({
 
 type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected';
 
-const STATUS_BADGE: Record<'draft' | 'pending' | 'approved' | 'rejected', string> = {
-  draft: 'bg-slate-100 text-slate-500 border-slate-200',
+const STATUS_BADGE: Record<'ongoing' | 'pending' | 'approved' | 'rejected', string> = {
+  ongoing: 'bg-sky-100 text-sky-600 border-sky-200',
   pending: 'bg-amber-50 text-amber-600 border-amber-100',
   approved: 'bg-emerald-50 text-emerald-600 border-emerald-100',
   rejected: 'bg-rose-50 text-rose-600 border-rose-100',
@@ -57,7 +57,7 @@ const AdminHistory: React.FC = () => {
     (async () => {
       const [{ data: profileData }, { data: subData }, { data: claimData }] = await Promise.all([
         supabase.from('profiles').select('*').order('name'),
-        supabase.from('submissions').select('*').neq('status', 'draft').order('created_at', { ascending: false }),
+        supabase.from('submissions').select('*').neq('status', 'ongoing').order('created_at', { ascending: false }),
         supabase.from('reward_claims').select('*').order('created_at', { ascending: false }),
       ]);
       setProfiles((profileData ?? []) as User[]);

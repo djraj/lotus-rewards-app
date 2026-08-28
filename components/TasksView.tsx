@@ -1,22 +1,27 @@
 
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Task, Submission } from '../types';
-import TaskSubmissionModal from './TaskSubmissionModal';
 
 interface Props {
   tasks: Task[];
-  onStartTask: (task: Task) => Promise<Submission>;
-  onSaveDraft: (submission: Submission, file: File | null, note: string) => Promise<void>;
-  onSubmitDraft: (submission: Submission, file: File | null, note: string) => Promise<void>;
+  submissions: Submission[];
+  onStartTask: (task: Task) => Promise<void>;
 }
 
 const CATEGORY_ORDER: Task['category'][] = ['Referral', 'Service', 'Content', 'Coordination'];
 
-const TasksView: React.FC<Props> = ({ tasks, onStartTask, onSaveDraft, onSubmitDraft }) => {
+const TasksView: React.FC<Props> = ({ tasks, submissions, onStartTask }) => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [startingTaskId, setStartingTaskId] = useState<string | null>(null);
-  const [activeDraft, setActiveDraft] = useState<Submission | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Tasks the user has already started and not yet submitted.
+  const ongoingTaskIds = useMemo(
+    () => new Set(submissions.filter(s => s.status === 'ongoing').map(s => s.taskId)),
+    [submissions],
+  );
 
   const groupedTasks = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -33,8 +38,8 @@ const TasksView: React.FC<Props> = ({ tasks, onStartTask, onSaveDraft, onSubmitD
     setStartingTaskId(task.id);
     setError(null);
     try {
-      const draft = await onStartTask(task);
-      setActiveDraft(draft);
+      await onStartTask(task);
+      navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start this task.');
     } finally {
@@ -73,28 +78,41 @@ const TasksView: React.FC<Props> = ({ tasks, onStartTask, onSaveDraft, onSubmitD
                 <span className="text-xs font-medium text-slate-400">({items.length})</span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {items.map((task) => (
-                  <div key={task.id} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col group">
-                    <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors duration-300 mb-4">
-                      <i className={`fa-solid ${task.icon} text-xl`}></i>
-                    </div>
-                    <h3 className="text-xl font-bold text-slate-800 mb-2">{task.title}</h3>
-                    <p className="text-slate-500 text-sm flex-grow">{task.description}</p>
-                    <div className="mt-6 flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-rose-500 font-bold">
-                        <i className="fa-solid fa-leaf text-sm"></i>
-                        <span>{task.points}</span>
+                {items.map((task) => {
+                  const ongoing = ongoingTaskIds.has(task.id);
+                  return (
+                    <div key={task.id} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all flex flex-col group">
+                      <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors duration-300 mb-4">
+                        <i className={`fa-solid ${task.icon} text-xl`}></i>
                       </div>
-                      <button
-                        onClick={() => handleStartTask(task)}
-                        disabled={startingTaskId === task.id}
-                        className="bg-slate-900 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-slate-800 transition-colors active:scale-95 disabled:opacity-50"
-                      >
-                        {startingTaskId === task.id ? 'Starting...' : 'Start Task'}
-                      </button>
+                      <h3 className="text-xl font-bold text-slate-800 mb-2">{task.title}</h3>
+                      <p className="text-slate-500 text-sm flex-grow">{task.description}</p>
+                      <div className="mt-6 flex items-center justify-between">
+                        <div className="flex items-center gap-1 text-rose-500 font-bold">
+                          <i className="fa-solid fa-leaf text-sm"></i>
+                          <span>{task.points}</span>
+                        </div>
+                        {ongoing ? (
+                          <button
+                            onClick={() => navigate('/')}
+                            className="bg-sky-100 text-sky-700 px-5 py-2 rounded-xl text-sm font-semibold hover:bg-sky-200 transition-colors active:scale-95 flex items-center gap-2"
+                          >
+                            <i className="fa-solid fa-hourglass-half text-xs"></i>
+                            Ongoing
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleStartTask(task)}
+                            disabled={startingTaskId === task.id}
+                            className="bg-slate-900 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-slate-800 transition-colors active:scale-95 disabled:opacity-50"
+                          >
+                            {startingTaskId === task.id ? 'Starting...' : 'Start Task'}
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
           ))}
@@ -104,15 +122,6 @@ const TasksView: React.FC<Props> = ({ tasks, onStartTask, onSaveDraft, onSubmitD
           <i className="fa-solid fa-magnifying-glass text-4xl mb-3 block opacity-20"></i>
           <p>No tasks match "{search}".</p>
         </div>
-      )}
-
-      {activeDraft && (
-        <TaskSubmissionModal
-          submission={activeDraft}
-          onClose={() => setActiveDraft(null)}
-          onSave={(file, note) => onSaveDraft(activeDraft, file, note)}
-          onSubmit={(file, note) => onSubmitDraft(activeDraft, file, note)}
-        />
       )}
     </div>
   );
