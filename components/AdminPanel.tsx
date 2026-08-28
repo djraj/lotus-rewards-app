@@ -6,9 +6,12 @@ import { supabase } from '../services/supabaseClient';
 
 interface Props {
   rewards: Reward[];
+  currentUserId: string;
   onUpdateStatus: (id: string, status: 'approved' | 'rejected') => Promise<void>;
   onPointsAdjusted: () => Promise<void>;
 }
+
+const ROLES: User['role'][] = ['user', 'admin'];
 
 const mapClaim = (row: any): RewardClaim => ({
   id: row.id,
@@ -35,9 +38,13 @@ const mapSubmission = (row: any): Submission => ({
   pointsAwarded: row.points_awarded,
 });
 
-const AdminPanel: React.FC<Props> = ({ rewards, onUpdateStatus, onPointsAdjusted }) => {
+const AdminPanel: React.FC<Props> = ({ rewards, currentUserId, onUpdateStatus, onPointsAdjusted }) => {
   const [profiles, setProfiles] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [roleUserId, setRoleUserId] = useState<string>('');
+  const [roleValue, setRoleValue] = useState<User['role']>('user');
+  const [savingRole, setSavingRole] = useState(false);
+  const [roleSuccess, setRoleSuccess] = useState<string | null>(null);
   const [manualAmount, setManualAmount] = useState<string>('');
   const [manualRemark, setManualRemark] = useState<string>('');
   const [adjusting, setAdjusting] = useState(false);
@@ -67,6 +74,10 @@ const AdminPanel: React.FC<Props> = ({ rewards, onUpdateStatus, onPointsAdjusted
     setProfiles(list);
     if (!selectedUserId && list.length > 0) setSelectedUserId(list[0].id);
     if (!sendUserId && list.length > 0) setSendUserId(list[0].id);
+    if (!roleUserId) {
+      const firstOther = list.find(p => p.id !== currentUserId) ?? list[0];
+      if (firstOther) setRoleUserId(firstOther.id);
+    }
   };
 
   const loadSubmissions = async () => {
@@ -88,6 +99,12 @@ const AdminPanel: React.FC<Props> = ({ rewards, onUpdateStatus, onPointsAdjusted
   useEffect(() => {
     if (!sendRewardId && rewards.length > 0) setSendRewardId(rewards[0].id);
   }, [rewards]);
+
+  // Reset the role dropdown to whatever the selected user currently is.
+  useEffect(() => {
+    const target = profiles.find(p => p.id === roleUserId);
+    if (target) setRoleValue(target.role);
+  }, [roleUserId, profiles]);
 
   useEffect(() => {
     const missing = pendingSubmissions
@@ -160,6 +177,30 @@ const AdminPanel: React.FC<Props> = ({ rewards, onUpdateStatus, onPointsAdjusted
       setActionError(err instanceof Error ? err.message : 'Failed to adjust points.');
     } finally {
       setAdjusting(false);
+    }
+  };
+
+  const handleSetRole = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!roleUserId || roleUserId === currentUserId) return;
+
+    setSavingRole(true);
+    setActionError(null);
+    setRoleSuccess(null);
+    try {
+      const { error } = await supabase.rpc('set_user_role', {
+        p_user_id: roleUserId,
+        p_role: roleValue,
+      });
+      if (error) throw error;
+      const name = profiles.find(p => p.id === roleUserId)?.name ?? 'user';
+      setRoleSuccess(`${name} is now ${roleValue === 'admin' ? 'an admin' : 'a regular user'}.`);
+      await loadProfiles();
+      setTimeout(() => setRoleSuccess(null), 4000);
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to change this role.');
+    } finally {
+      setSavingRole(false);
     }
   };
 
@@ -392,6 +433,63 @@ const AdminPanel: React.FC<Props> = ({ rewards, onUpdateStatus, onPointsAdjusted
               >
                 {adjusting ? 'Updating...' : 'Update Balance'}
               </button>
+            </form>
+          </section>
+
+          <section className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <i className="fa-solid fa-user-shield text-slate-400"></i>
+              Team Roles
+            </h3>
+
+            <form onSubmit={handleSetRole} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">User</label>
+                <select
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
+                  value={roleUserId}
+                  onChange={(e) => setRoleUserId(e.target.value)}
+                >
+                  {profiles.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}{p.id === currentUserId ? ' (you)' : ''} — {p.role}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Role</label>
+                <select
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none capitalize disabled:opacity-50"
+                  value={roleValue}
+                  disabled={roleUserId === currentUserId}
+                  onChange={(e) => setRoleValue(e.target.value as User['role'])}
+                >
+                  {ROLES.map(r => (
+                    <option key={r} value={r} className="capitalize">{r}</option>
+                  ))}
+                </select>
+              </div>
+              {roleSuccess && (
+                <p className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-xl p-3">{roleSuccess}</p>
+              )}
+              <button
+                disabled={
+                  savingRole ||
+                  !roleUserId ||
+                  roleUserId === currentUserId ||
+                  roleValue === (profiles.find(p => p.id === roleUserId)?.role ?? roleValue)
+                }
+                className="w-full bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition-all disabled:opacity-50"
+              >
+                {savingRole ? 'Updating...' : 'Update Role'}
+              </button>
+              <p className="text-[11px] text-slate-400">
+                <i className="fa-solid fa-info-circle mr-1"></i>
+                {roleUserId === currentUserId
+                  ? "You can't change your own role — another admin has to."
+                  : 'Admins can review submissions, adjust points, send rewards, and manage roles. The change takes effect on the user’s next page load.'}
+              </p>
             </form>
           </section>
 

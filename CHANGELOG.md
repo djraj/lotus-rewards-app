@@ -5,7 +5,59 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project ha
 no version tags yet, so entries are grouped by the pull request / milestone that
 landed them on `main`.
 
-## [Unreleased] — Brevo email (branch `feature/brevo-email-notifications`)
+## [PR #11] Admin role management — 2026-08-29
+
+### Added
+- **Team Roles card** in the Admin panel — an admin can set another user's role
+  (`user` / `admin`) via a new `set_user_role(p_user_id, p_role)` RPC. Guards:
+  admin-only, valid role, target must exist, and you cannot change your own role
+  (another admin has to). Every change is written to a `role_changes` audit
+  table (`20260904000000`).
+
+## [PR #10] Ongoing tasks — 2026-08-29
+
+### Changed
+- **"Start Task" no longer opens the proof modal.** It creates the submission
+  and routes to the Dashboard; the user finishes it from Recent Activity.
+- A task that already has an unsubmitted submission shows an "Ongoing" control
+  instead of "Start Task" — no more piling up duplicate drafts. Enforced client
+  side and by a partial unique index `submissions_one_ongoing_per_task`.
+- The started-but-not-submitted status is renamed `draft` → `ongoing`
+  everywhere: `submissions_status_check`, the photo-required constraint, the
+  owner-edit RLS policy, `submit_task`, the `notify` function, and the app
+  (`20260903000000`).
+
+## [PR #9] Magic-link hardening — 2026-08-29
+
+### Fixed
+- A failed magic-link verify (expired / already-used) redirected back with
+  `error_description` in the URL and the app showed a blank login form. A new
+  `consumeAuthCallback()` (run before the app mounts) surfaces the reason on the
+  sign-in screen.
+
+### Changed
+- The magic-link email now links to `{{ .SiteURL }}/?token_hash=…&type=magiclink`
+  instead of Supabase's `/auth/v1/verify` GET, so a mail-security scanner that
+  pre-fetches the link can't burn the single-use token — the SPA verifies it
+  with `verifyOtp()` only when a real user opens it.
+
+## [PR #8] Auth fixes + OTP code — 2026-08-29
+
+### Added
+- **Code entry for magic-link sign-in** — after "Send Magic Link" the form is
+  replaced by a numeric input that verifies via
+  `supabase.auth.verifyOtp({ type: 'email' })`, a fallback when the emailed link
+  won't open.
+
+### Fixed
+- `supabase config push` was overwriting the hosted project's `site_url`, email
+  rate limit, OTP length, and MFA settings with local-dev values. A
+  `[remotes.production]` block in `config.toml` now holds the production values
+  so local dev and the hosted project each get the right ones.
+- Hosted SMTP `user` was reset to the Brevo account email instead of the
+  dedicated relay login, which stopped all auth email; restored.
+
+## [PR #7] Brevo email — 2026-08-28
 
 ### Added
 - **Auth email over Brevo SMTP** — `supabase/config.toml` wires
