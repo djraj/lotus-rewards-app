@@ -14,7 +14,7 @@ interface Props {
 }
 
 const STATUS_STYLE: Record<Submission['status'], { bg: string; text: string; icon: string; label: string }> = {
-  draft: { bg: 'bg-slate-100', text: 'text-slate-500', icon: 'fa-pen', label: 'Draft' },
+  draft: { bg: 'bg-sky-100', text: 'text-sky-600', icon: 'fa-hourglass-half', label: 'Ongoing' },
   pending: { bg: 'bg-amber-100', text: 'text-amber-600', icon: 'fa-hourglass', label: 'Pending' },
   approved: { bg: 'bg-emerald-100', text: 'text-emerald-600', icon: 'fa-check', label: 'Approved' },
   rejected: { bg: 'bg-rose-100', text: 'text-rose-600', icon: 'fa-xmark', label: 'Rejected' },
