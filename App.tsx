@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { User, Task, Reward, Submission, RewardClaim } from './types';
 import { supabase } from './services/supabaseClient';
 import { compressImage } from './services/image';
@@ -37,6 +37,17 @@ const mapRewardClaim = (row: any): RewardClaim => ({
   grantedBy: row.granted_by,
   timestamp: row.created_at,
 });
+
+// Route-aware nav styling: the item for the current route renders active
+// (rose + bold), everything else stays inactive. Passed straight to NavLink's
+// className render-prop.
+const desktopNavClass = ({ isActive }: { isActive: boolean }) =>
+  isActive
+    ? 'text-rose-600 font-bold transition-colors'
+    : 'text-slate-600 hover:text-rose-500 font-medium transition-colors';
+
+const mobileNavClass = ({ isActive }: { isActive: boolean }) =>
+  `flex flex-col items-center gap-1 ${isActive ? 'text-rose-500 font-bold' : 'text-slate-500'}`;
 
 const App: React.FC = () => {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -228,11 +239,11 @@ const App: React.FC = () => {
               </div>
 
               <div className="hidden md:flex items-center space-x-8">
-                <Link to="/" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">Dashboard</Link>
-                <Link to="/tasks" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">Tasks</Link>
-                <Link to="/rewards" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">Rewards</Link>
-                {isAdmin && <Link to="/admin" className="text-rose-600 font-bold">Admin</Link>}
-                {isAdmin && <Link to="/admin/history" className="text-slate-600 hover:text-rose-500 font-medium transition-colors">History</Link>}
+                <NavLink to="/" end className={desktopNavClass}>Dashboard</NavLink>
+                <NavLink to="/tasks" className={desktopNavClass}>Tasks</NavLink>
+                <NavLink to="/rewards" className={desktopNavClass}>Rewards</NavLink>
+                {isAdmin && <NavLink to="/admin" end className={desktopNavClass}>Admin</NavLink>}
+                {isAdmin && <NavLink to="/admin/history" className={desktopNavClass}>History</NavLink>}
               </div>
 
               <div className="flex items-center gap-4">
@@ -327,29 +338,29 @@ const App: React.FC = () => {
 
         {/* Mobile Nav */}
         <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 px-2 z-50">
-          <Link to="/" className="flex flex-col items-center gap-1 text-slate-500">
+          <NavLink to="/" end className={mobileNavClass}>
             <i className="fa-solid fa-chart-pie"></i>
             <span className="text-[10px]">Home</span>
-          </Link>
-          <Link to="/tasks" className="flex flex-col items-center gap-1 text-slate-500">
+          </NavLink>
+          <NavLink to="/tasks" className={mobileNavClass}>
             <i className="fa-solid fa-list-check"></i>
             <span className="text-[10px]">Tasks</span>
-          </Link>
-          <Link to="/rewards" className="flex flex-col items-center gap-1 text-slate-500">
+          </NavLink>
+          <NavLink to="/rewards" className={mobileNavClass}>
             <i className="fa-solid fa-gift"></i>
             <span className="text-[10px]">Rewards</span>
-          </Link>
+          </NavLink>
           {isAdmin && (
-            <Link to="/admin" className="flex flex-col items-center gap-1 text-rose-500 font-bold">
+            <NavLink to="/admin" end className={mobileNavClass}>
               <i className="fa-solid fa-shield-halved"></i>
               <span className="text-[10px]">Admin</span>
-            </Link>
+            </NavLink>
           )}
           {isAdmin && (
-            <Link to="/admin/history" className="flex flex-col items-center gap-1 text-slate-500">
+            <NavLink to="/admin/history" className={mobileNavClass}>
               <i className="fa-solid fa-clock-rotate-left"></i>
               <span className="text-[10px]">History</span>
-            </Link>
+            </NavLink>
           )}
         </div>
       </div>
