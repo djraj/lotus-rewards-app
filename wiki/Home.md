@@ -32,6 +32,8 @@ password reset) sends the member an email.
 | [Deployment](Deployment.md) | How it ships |
 | [Email Notifications](Email-Notifications.md) | Brevo + the `notify` function |
 | [Testing](Testing.md) | Beta test guide and the RLS boundary check |
+| [Contributing](Contributing.md) | Workflow, definition of done, releases |
+| [Changelog](https://github.com/djraj/lotus-rewards-app/blob/main/CHANGELOG.md) | What changed in each release (repo root) |
 
 ## Tech stack
 

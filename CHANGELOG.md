@@ -5,6 +5,20 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project ha
 no version tags yet, so entries are grouped by the pull request / milestone that
 landed them on `main`.
 
+## Contributor docs + CLAUDE.md — 2026-08-30
+
+### Added
+- **`CLAUDE.md`** at the repo root — codebase map, commands, conventions, and a
+  **Definition of done** for every completed item: tested and working in
+  development first, then type-check/build, a `CHANGELOG.md` entry, and updates
+  to the affected `wiki/` pages — all in the same PR.
+- **`wiki/Contributing.md`** — the branch → PR → changelog → wiki workflow, the
+  same definition of done, and the roadmap / milestone / release-tag model.
+- **Changelog** link in `wiki/_Sidebar.md`, `wiki/Home.md`, and
+  `wiki/README.md`, pointing at the repo-root `CHANGELOG.md`. The changelog
+  stays at the root (reviewed with the code, feeds GitHub Release notes); the
+  wiki links to it rather than duplicating it.
+
 ## [PR #11] Admin role management — 2026-08-29
 
 ### Added

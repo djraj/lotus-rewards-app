@@ -13,3 +13,5 @@
 - [Deployment](Deployment.md)
 - [Email Notifications](Email-Notifications.md)
 - [Testing](Testing.md)
+- [Contributing](Contributing.md)
+- [Changelog](https://github.com/djraj/lotus-rewards-app/blob/main/CHANGELOG.md)
