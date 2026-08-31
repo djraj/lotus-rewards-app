@@ -249,19 +249,19 @@ user = "env(BREVO_SMTP_USER)"
 pass = "env(BREVO_SMTP_KEY)"
 # Must be an address verified as a Sender in Brevo. Users see mail "from" this.
 admin_email = "env(EMAIL_SENDER_ADDRESS)"
-sender_name = "Golden Lotus Rewards"
+sender_name = "GLHC Rewards"
 
 # --- Auth email templates (magic link, signup confirmation, password reset) ---
 [auth.email.template.magic_link]
-subject = "Your Golden Lotus sign-in link"
+subject = "Your GLHC Rewards sign-in link"
 content_path = "./supabase/templates/magic_link.html"
 
 [auth.email.template.confirmation]
-subject = "Welcome to Golden Lotus - confirm your email"
+subject = "Welcome to GLHC Rewards - confirm your email"
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
-subject = "Reset your Golden Lotus password"
+subject = "Reset your GLHC Rewards password"
 content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize notification email template

@@ -1,6 +1,6 @@
 # Email Notifications
 
-Golden Lotus sends mail through [Brevo](https://www.brevo.com) (free tier:
+GLHC Rewards sends mail through [Brevo](https://www.brevo.com) (free tier:
 300 emails/day). The full setup walkthrough is
 [`Docs/email-setup.md`](https://github.com/djraj/lotus-rewards-app/blob/main/Docs/email-setup.md);
 this is the map.
@@ -34,6 +34,8 @@ Set under **Authentication → Emails → SMTP Settings**: host
 Brevo **SMTP key**, sender = your verified Brevo sender. Paste
 `supabase/templates/{magic_link,confirmation,recovery}.html` into the matching
 templates, add your deployed origin to **URL Configuration → Redirect URLs**,
+(the templates lead with `<img src="{{ .SiteURL }}/logo-email.png">`, so the
+origin must serve that asset — it ships in `public/`),
 and enable **Confirm email**. Locally, the `BREVO_SMTP_*` / `EMAIL_SENDER_*`
 `.env` values feed `supabase/config.toml`.
 
@@ -45,7 +47,7 @@ supabase secrets set \
   WEBHOOK_SECRET='<random-string>' \
   BREVO_API_KEY='<your-API-key>' \
   EMAIL_SENDER_ADDRESS='<verified-sender>' \
-  EMAIL_SENDER_NAME='Golden Lotus Rewards' \
+  EMAIL_SENDER_NAME='GLHC Rewards' \
   APP_URL='https://lotus-rewards-app.jariarud.workers.dev'
 ```
 

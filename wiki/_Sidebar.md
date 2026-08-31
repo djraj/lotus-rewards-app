@@ -1,4 +1,4 @@
-### Golden Lotus Rewards
+### GLHC Rewards
 
 - [Home](Home.md)
 

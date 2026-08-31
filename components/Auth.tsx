@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { takeAuthError } from '../services/authCallback';
+import Logo from './Logo';
 
 type Mode = 'sign-in' | 'sign-up';
 
@@ -116,11 +117,8 @@ const Auth: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="bg-white w-full max-w-md rounded-3xl shadow-sm border border-slate-100 p-8">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-300 rounded-full flex items-center justify-center text-white text-xl shadow-lg">
-            <i className="fa-solid fa-seedling"></i>
-          </div>
-          <span className="text-2xl font-serif font-bold text-slate-800 tracking-tight">Golden Lotus</span>
+        <div className="mb-8">
+          <Logo className="h-10 w-auto" />
         </div>
 
         <h1 className="text-2xl font-bold text-slate-800 mb-1">

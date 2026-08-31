@@ -12,7 +12,7 @@ Bugs go to
 
 # Beta tester field guide
 
-Help us shake down Golden Lotus Rewards before launch: what to try, how to log
+Help us shake down GLHC Rewards before launch: what to try, how to log
 what breaks, what we need back.
 
 | | |
@@ -26,7 +26,7 @@ what breaks, what we need back.
 
 ## 0 · What you're testing
 
-**Golden Lotus Rewards** is a browser app (phone + desktop) for a wellness
+**GLHC Rewards** is a browser app (phone + desktop) for a wellness
 community. Members earn **Lotus Points** by completing real‑world tasks and
 submitting a **proof photo**; admins review and award the points; members
 spend points in a **rewards marketplace**. Admins also adjust balances, gift

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../services/supabaseClient';
+import Logo from './Logo';
 
 // Shown after the user follows a password-reset link. At this point Supabase
 // has already exchanged the recovery token for a session, so all we do is set
@@ -37,11 +38,8 @@ const UpdatePassword: React.FC<{ onDone: () => void }> = ({ onDone }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="bg-white w-full max-w-md rounded-3xl shadow-sm border border-slate-100 p-8">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-300 rounded-full flex items-center justify-center text-white text-xl shadow-lg">
-            <i className="fa-solid fa-seedling"></i>
-          </div>
-          <span className="text-2xl font-serif font-bold text-slate-800 tracking-tight">Golden Lotus</span>
+        <div className="mb-8">
+          <Logo className="h-10 w-auto" />
         </div>
 
         <h1 className="text-2xl font-bold text-slate-800 mb-1">Choose a new password</h1>

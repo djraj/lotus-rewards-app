@@ -1,9 +1,38 @@
 # Changelog
 
-All notable changes to Golden Lotus Rewards, oldest to newest. Format loosely
+All notable changes to GLHC Rewards, oldest to newest. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project has
 no version tags yet, so entries are grouped by the pull request / milestone that
 landed them on `main`.
+
+## Sitewide logo + favicon + `<Logo />` — 2026-08-31
+
+### Added
+- **Real brand assets under `public/`** — a hand-built vector lotus
+  (`logo-mark.svg`), a horizontal lockup with the "Golden Lotus Healing Center"
+  wordmark (`logo.svg`), and generated raster icons: `favicon.ico`,
+  `favicon-16/32/48.png`, `apple-touch-icon.png` (gold lotus on navy), and
+  `logo-email.png` (navy "royal" banner for email clients, which don't render
+  SVG).
+- **`components/Logo.tsx`** — one shared `<Logo variant="full" | "mark" />` that
+  renders the `public/` SVGs. Single source of truth for the mark.
+- **Favicon, `apple-touch-icon`, `theme-color`, and a meta description** wired
+  into `index.html`. The browser tab now shows the lotus instead of a blank
+  document icon.
+
+### Changed
+- The inline Font Awesome `fa-seedling` glyph + "Golden Lotus" text mark is
+  replaced by `<Logo />` on every surface — the app header (the separate nav
+  title text is removed; the lockup carries the wordmark), `Auth`, and
+  `UpdatePassword`.
+- **The app is renamed "GLHC Rewards"** — page `<title>`, `metadata.json`, the
+  app footer, `README.md`, and every auth / notification email string. The full
+  "Golden Lotus Healing Center" name lives on in the logo lockup and image alt
+  text.
+- The three branded email templates in `supabase/templates/` and the `notify`
+  Edge Function's inline HTML now lead with the navy `logo-email.png` banner in
+  place of the "🪷 Golden Lotus" text header. `notify` falls back to a plain
+  "GLHC Rewards" wordmark when `APP_URL` is unset.
 
 ## Contributor docs + CLAUDE.md — 2026-08-30
 

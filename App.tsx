@@ -10,6 +10,7 @@ import TasksView from './components/TasksView';
 import RewardsView from './components/RewardsView';
 import AdminPanel from './components/AdminPanel';
 import AdminHistory from './components/AdminHistory';
+import Logo from './components/Logo';
 import Auth from './components/Auth';
 import UpdatePassword from './components/UpdatePassword';
 
@@ -231,11 +232,8 @@ const App: React.FC = () => {
         <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16 items-center">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-300 rounded-full flex items-center justify-center text-white text-xl shadow-lg">
-                  <i className="fa-solid fa-seedling"></i>
-                </div>
-                <span className="text-2xl font-serif font-bold text-slate-800 tracking-tight">Golden Lotus</span>
+              <div className="flex items-center">
+                <Logo className="h-10 w-auto" />
               </div>
 
               <div className="hidden md:flex items-center space-x-8">
@@ -332,7 +330,7 @@ const App: React.FC = () => {
 
         <footer className="bg-white border-t border-slate-200 py-6 mt-12">
           <div className="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
-            <p>&copy; 2026 Golden Lotus Rewards System. Nurturing growth, one step at a time.</p>
+            <p>&copy; 2026 GLHC Rewards. Nurturing growth, one step at a time.</p>
           </div>
         </footer>
 
