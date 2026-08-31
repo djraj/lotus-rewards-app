@@ -1,23 +1,56 @@
 # Deployment
 
-## Frontend — Cloudflare Workers Builds
+`main` is the integration branch. **An annotated `vX.Y.Z` tag is the "ship it"
+action** — merging to `main` no longer promotes to production.
 
-Pushing to `main` triggers a build that runs:
+## Frontend — the release flow
 
-1. `npm run build` — `tsc --noEmit` then the Vite production build to `dist/`
-2. `npx wrangler versions upload` — uploads `dist/` as static assets, served
-   per [`wrangler.toml`](https://github.com/djraj/lotus-rewards-app/blob/main/wrangler.toml)
+### On every PR and push to `main` — `.github/workflows/ci.yml`
 
-`VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` must be set as **Build**
-variables in the Cloudflare dashboard:
+`npm ci` then `npm run build` (`tsc --noEmit` via `prebuild`, then the Vite
+build). This is the gate; a type error fails it.
 
-> Worker → Settings → Build → **Variables and secrets**
+### On `main` — Cloudflare Workers Builds (preview only)
 
-These are distinct from "Runtime variables and secrets", which don't apply to
-a static‑assets‑only Worker.
+Cloudflare still builds each push to `main`, but as a **non-promoted preview**
+(`npx wrangler versions upload`) — a versioned URL, not the live site. Set this
+in the Cloudflare dashboard:
 
-A genuine type error fails this build (the `prebuild` type‑check), so it
-fails the deploy, not just a local check.
+> Worker → Settings → Build → **Branch control** — mark `main` a
+> *non-production* branch (or set its deploy command to
+> `npx wrangler versions upload`).
+
+`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` stay as **Build** variables here
+(Worker → Settings → Build → **Variables and secrets**; distinct from "Runtime"
+ones, which don't apply to a static-assets Worker).
+
+### On a `vX.Y.Z` tag — `.github/workflows/release.yml`
+
+```bash
+# bump the version in its own PR first
+npm version <x.y.z> --no-git-tag-version   # edits package.json only
+# …commit + merge that PR, then:
+git tag -a v<x.y.z> -m "v<x.y.z>" && git push origin v<x.y.z>
+```
+
+The workflow then:
+
+1. **Verifies** the tag equals `package.json` `version` (fails the release if not).
+2. **Verifies** `CHANGELOG.md` has a `## [x.y.z]` section (used as the release notes).
+3. `npm run build` with the production Supabase env.
+4. `npx wrangler deploy` — promotes the build to the live Worker.
+5. `gh release create` — publishes the GitHub Release.
+
+**Required GitHub → Settings → Secrets and variables → Actions:**
+
+| Secret | Why |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | `wrangler deploy` auth — token with *Workers Scripts: Edit* |
+| `CLOUDFLARE_ACCOUNT_ID` | target account |
+| `VITE_SUPABASE_URL` | baked into the production bundle (the build now runs in Actions, not Cloudflare) |
+| `VITE_SUPABASE_ANON_KEY` | same |
+
+`npm run deploy` runs the same `wrangler deploy` locally as a break-glass path.
 
 ## Backend — Supabase (separate, manual)
 

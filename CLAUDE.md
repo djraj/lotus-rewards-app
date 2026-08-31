@@ -23,12 +23,13 @@ rewards marketplace. Full picture: [`wiki/Home.md`](wiki/Home.md) and
 | `npm run build` | `tsc --noEmit` (via `prebuild`) then the Vite production build to `dist/` |
 | `npm run typecheck` | `tsc --noEmit` only |
 | `npm run preview` | Serve the production build locally |
+| `npm run deploy` | `wrangler deploy` — promote `dist/` to the live Worker (break-glass; the release workflow normally does this) |
 | `npx supabase db push` | Apply `supabase/migrations/` to the linked project |
 | `npx supabase functions deploy notify` | Deploy the `notify` Edge Function |
 
 There is **no test runner or linter yet** (tracked in issue #29). The build's
-type-check is the only automated gate — Cloudflare runs `npm run build` too,
-so a type error fails the real deploy.
+type-check is the only automated gate — `.github/workflows/ci.yml` runs
+`npm run build` on every PR and push to `main`, so a type error fails the check.
 
 ## Layout
 
@@ -44,7 +45,8 @@ supabase/migrations/    schema, RLS policies, RPC functions — timestamp-prefix
 supabase/functions/     the `notify` Edge Function (Deno; excluded from the app type-check)
 Docs/                   production-migration-plan.md (canonical design record), email-setup.md
 wiki/                   Markdown docs, also published to the GitHub Wiki tab
-CHANGELOG.md            every landed change, newest last
+.github/workflows/      ci.yml (build every PR) + release.yml (vX.Y.Z tag → ship)
+CHANGELOG.md            Keep a Changelog; unreleased work under `## [Unreleased]`
 ```
 
 ## Conventions
@@ -77,12 +79,13 @@ When you finish a roadmap item, a bug fix, or any change that lands on `main`,
    intended and produce no new console errors. Don't commit code that hasn't
    been run locally. (Docs-only changes are exempt; say so in the PR.)
 2. **Type-check + build.** `npm run build` passes (it runs `tsc --noEmit`
-   first, and Cloudflare's deploy runs the same command).
-3. **Update `CHANGELOG.md`.** Add an entry under the current top grouping,
-   following the existing format (`### Added` / `### Changed` / `### Fixed`
-   bullets, grouped by the PR / milestone that lands them). One entry per
-   user-visible or structural change, written so a reader who wasn't there
-   understands what changed and why. Absolute dates, not "today".
+   first; CI runs the same command on every PR).
+3. **Update `CHANGELOG.md`.** Add bullets under the **`## [Unreleased]`**
+   heading in the existing format (`### Added` / `### Changed` / `### Fixed`).
+   One entry per user-visible or structural change, written so a reader who
+   wasn't there understands what changed and why. Absolute dates, not "today".
+   A release renames `## [Unreleased]` to `## [X.Y.Z] - <date>` and adds the
+   compare link.
 4. **Update the wiki.** If the change affects behaviour, data model, security,
    setup, deployment, or email, update the matching page(s) under `wiki/`
    ([Home](wiki/Home.md), [User Guide](wiki/User-Guide.md),
@@ -121,7 +124,6 @@ editing the files here is the source-of-truth step; the sync is separate.
 
 Tracked in GitHub Project **Golden Lotus Roadmap**
 (`https://github.com/users/djraj/projects/2`), milestones `v0.1.0` / `v0.2.0`
-/ `v0.3.0` / Backlog. Issue #15 introduces semver git tags + release CI; once
-that lands, `CHANGELOG.md` headings move from `## [PR #n]` to `## [X.Y.Z]` and
-the "current top grouping" in the Definition of Done above means the unreleased
-section at the top.
+/ `v0.3.0` / Backlog. Releases are semver git tags (`vX.Y.Z`) — see
+[`wiki/Deployment.md`](wiki/Deployment.md). Unreleased changelog entries go
+under `## [Unreleased]`; a release renames that heading and tags the commit.
