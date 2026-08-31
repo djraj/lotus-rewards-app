@@ -1,6 +1,6 @@
 # Email setup (Brevo)
 
-Golden Lotus sends two kinds of mail:
+GLHC Rewards sends two kinds of mail:
 
 | Kind | Sent by | Trigger |
 | --- | --- | --- |
@@ -63,7 +63,7 @@ Either run `supabase config push` (pushes the `[auth]` block from
   - Host `smtp-relay.brevo.com`, Port `587`
   - Username = your Brevo account email
   - Password = the Brevo **SMTP key**
-  - Sender email = your verified sender, Sender name = `Golden Lotus Rewards`
+  - Sender email = your verified sender, Sender name = `GLHC Rewards`
 - **Authentication → URL Configuration** → add your deployed origin to
   **Redirect URLs** and set **Site URL**.
 - **Authentication → Emails → Templates** → paste the contents of
@@ -90,7 +90,7 @@ supabase secrets set \
   WEBHOOK_SECRET='<random-string>' \
   BREVO_API_KEY='xkeysib-...your-API-key...' \
   EMAIL_SENDER_ADDRESS='your-verified-sender@email.com' \
-  EMAIL_SENDER_NAME='Golden Lotus Rewards' \
+  EMAIL_SENDER_NAME='GLHC Rewards' \
   APP_URL='https://your-deployed-app.example'
 ```
 

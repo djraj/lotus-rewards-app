@@ -1,4 +1,4 @@
-// Transactional email sender for Golden Lotus.
+// Transactional email sender for GLHC Rewards.
 //
 // Called by Postgres `after insert/update` triggers on `submissions` and
 // `reward_claims` (see migration 20260831000000). Each call carries an
@@ -11,7 +11,7 @@
 //   WEBHOOK_SECRET        - shared secret, must match the value the trigger sends
 //   BREVO_API_KEY         - Brevo "API key" (SMTP & API > API keys), NOT the SMTP key
 //   EMAIL_SENDER_ADDRESS  - a verified Brevo sender address
-//   EMAIL_SENDER_NAME     - optional, defaults to "Golden Lotus Rewards"
+//   EMAIL_SENDER_NAME     - optional, defaults to "GLHC Rewards"
 //   APP_URL               - optional, deployed app origin, used for button links
 //   SUPABASE_URL          - injected automatically on deploy
 //   SUPABASE_SERVICE_ROLE_KEY - injected automatically on deploy
@@ -21,7 +21,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET") ?? "";
 const BREVO_API_KEY = Deno.env.get("BREVO_API_KEY") ?? "";
 const SENDER_ADDRESS = Deno.env.get("EMAIL_SENDER_ADDRESS") ?? "";
-const SENDER_NAME = Deno.env.get("EMAIL_SENDER_NAME") ?? "Golden Lotus Rewards";
+const SENDER_NAME = Deno.env.get("EMAIL_SENDER_NAME") ?? "GLHC Rewards";
 const APP_URL = (Deno.env.get("APP_URL") ?? "").replace(/\/$/, "");
 
 const admin = createClient(
@@ -117,16 +117,19 @@ function renderHtml(m: Mail, name: string): string {
          <a href="${APP_URL}" style="display:inline-block;background:#f43f5e;color:#ffffff;text-decoration:none;font-weight:700;font-size:15px;padding:13px 28px;border-radius:14px;">${esc(m.ctaLabel)}</a>
        </td></tr>`
     : "";
+  const brand = APP_URL
+    ? `<img src="${APP_URL}/logo-email.png" width="200" height="44" alt="GLHC Rewards — Golden Lotus Healing Center" style="display:block;border:0;outline:none;text-decoration:none;border-radius:10px;" />`
+    : `<span style="font-size:22px;font-weight:700;color:#1e293b;">GLHC&nbsp;Rewards</span>`;
   return `<!doctype html><html><body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f172a;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;padding:32px 12px;"><tr><td align="center">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border:1px solid #e2e8f0;border-radius:20px;padding:36px;">
-      <tr><td style="font-size:22px;font-weight:700;color:#1e293b;padding-bottom:8px;">🪷&nbsp;Golden Lotus</td></tr>
+      <tr><td style="padding-bottom:16px;">${brand}</td></tr>
       <tr><td style="font-size:20px;font-weight:700;padding:12px 0 4px;">${esc(m.heading)}</td></tr>
       <tr><td style="font-size:15px;line-height:1.6;color:#475569;padding:8px 0 24px;">Hi ${esc(name || "there")},<br /><br />${m.body}</td></tr>
       ${cta}
-      <tr><td style="font-size:13px;line-height:1.6;color:#94a3b8;">You're receiving this because you have a Golden Lotus Rewards account.</td></tr>
+      <tr><td style="font-size:13px;line-height:1.6;color:#94a3b8;">You're receiving this because you have a GLHC Rewards account.</td></tr>
     </table>
-    <div style="max-width:480px;font-size:12px;color:#cbd5e1;padding:16px 8px;">&copy; Golden Lotus Rewards</div>
+    <div style="max-width:480px;font-size:12px;color:#cbd5e1;padding:16px 8px;">&copy; GLHC Rewards</div>
   </td></tr></table></body></html>`;
 }
 

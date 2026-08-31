@@ -4,7 +4,7 @@ Guidance for Claude Code (and humans) working in this repository.
 
 ## What this is
 
-**Golden Lotus Rewards** — a community rewards web app. Members earn Lotus
+**GLHC Rewards** — a community rewards web app. Members earn Lotus
 Points by completing real-world tasks (submitted with a photo as proof);
 admins review submissions and award points; members redeem points in a
 rewards marketplace. Full picture: [`wiki/Home.md`](wiki/Home.md) and

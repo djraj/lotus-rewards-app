@@ -1,6 +1,6 @@
-# Golden Lotus Rewards
+# GLHC Rewards
 
-A community rewards app: members earn Lotus Points by completing tasks (submitted with a photo as proof), redeem points for sessions/products/workshops/reviews, and admins review submissions and manage balances.
+A community rewards app for Golden Lotus Healing Center: members earn Lotus Points by completing tasks (submitted with a photo as proof), redeem points for sessions/products/workshops/reviews, and admins review submissions and manage balances.
 
 - **Frontend**: React 19 + Vite + TypeScript + Tailwind (via CDN), React Router (`HashRouter`)
 - **Backend**: [Supabase](https://supabase.com) — Postgres, Auth (email/password + magic link), Row Level Security, Storage (proof photos), RPC functions for point mutations
@@ -49,7 +49,7 @@ See [`Docs/production-migration-plan.md`](Docs/production-migration-plan.md) for
 
    ```bash
    npx supabase functions deploy notify
-   npx supabase secrets set WEBHOOK_SECRET=... BREVO_API_KEY=... EMAIL_SENDER_ADDRESS=... EMAIL_SENDER_NAME='Golden Lotus Rewards' APP_URL=...
+   npx supabase secrets set WEBHOOK_SECRET=... BREVO_API_KEY=... EMAIL_SENDER_ADDRESS=... EMAIL_SENDER_NAME='GLHC Rewards' APP_URL=...
    # then insert the private.email_config row (see the doc)
    ```
 

@@ -1,12 +1,17 @@
-# Golden Lotus Rewards
+# GLHC Rewards
 
-A community rewards web app. Members earn **Lotus Points** by completing
-real‑world tasks and submitting a photo as proof; admins review each
-submission and award the points; members spend points in a rewards
-marketplace on sessions, products, workshops, and review classes.
+A community rewards web app for **Golden Lotus Healing Center**. Members earn
+**Lotus Points** by completing real‑world tasks and submitting a photo as
+proof; admins review each submission and award the points; members spend
+points in a rewards marketplace on sessions, products, workshops, and review
+classes.
 
 - **Live app:** https://lotus-rewards-app.jariarud.workers.dev/
 - **Version:** 1.0
+- **Brand:** the mark is a gold lotus. Assets live in `public/`
+  (`logo-mark.svg` lotus only, `logo.svg` lockup with the "Golden Lotus
+  Healing Center" wordmark, favicon set, and `logo-email.png` for email),
+  surfaced through the single `components/Logo.tsx` component.
 
 ## How it works
 

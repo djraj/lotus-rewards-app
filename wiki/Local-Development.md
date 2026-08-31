@@ -45,7 +45,7 @@ the RPC functions ([Data Model and Security](Data-Model-and-Security.md)).
 ```bash
 npx supabase functions deploy notify
 npx supabase secrets set WEBHOOK_SECRET=... BREVO_API_KEY=... \
-  EMAIL_SENDER_ADDRESS=... EMAIL_SENDER_NAME='Golden Lotus Rewards' APP_URL=...
+  EMAIL_SENDER_ADDRESS=... EMAIL_SENDER_NAME='GLHC Rewards' APP_URL=...
 ```
 
 Then insert the `private.email_config` row — full walkthrough in
