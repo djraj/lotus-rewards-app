@@ -8,14 +8,13 @@ landed them on `main`.
 ## Sitewide logo + favicon + `<Logo />` — 2026-08-31
 
 ### Added
-- **Real brand assets under `public/`** — a hand-built vector lotus
-  (`logo-mark.svg`), a horizontal lockup with the "Golden Lotus Healing Center"
-  wordmark (`logo.svg`), and generated raster icons: `favicon.ico`,
-  `favicon-16/32/48.png`, `apple-touch-icon.png` (gold lotus on navy), and
-  `logo-email.png` (navy "royal" banner for email clients, which don't render
-  SVG).
+- **Real brand assets under `public/`** — the gold-lotus mark (`logo-mark.png`)
+  and a horizontal lockup with the "Golden Lotus Healing Center" wordmark
+  (`logo.png`), both from the supplied brand artwork, plus generated icons:
+  `favicon.ico`, `favicon-16/32/48.png`, `apple-touch-icon.png` (gold lotus on
+  the brand navy `#000745`), and `logo-email.png` (the "royal" navy banner).
 - **`components/Logo.tsx`** — one shared `<Logo variant="full" | "mark" />` that
-  renders the `public/` SVGs. Single source of truth for the mark.
+  renders the `public/` images. Single source of truth for the mark.
 - **Favicon, `apple-touch-icon`, `theme-color`, and a meta description** wired
   into `index.html`. The browser tab now shows the lotus instead of a blank
   document icon.
