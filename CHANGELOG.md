@@ -1,9 +1,45 @@
 # Changelog
 
-All notable changes to GLHC Rewards, oldest to newest. Format loosely
-follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project has
-no version tags yet, so entries are grouped by the pull request / milestone that
-landed them on `main`.
+All notable changes to GLHC Rewards. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
+[Semantic Versioning](https://semver.org/): an annotated `vX.Y.Z` tag on `main`
+is the release action (see [Deployment](wiki/Deployment.md)). Changes for the
+next release accumulate under **[Unreleased]**; tagging renames that heading to
+the version and date.
+
+## [Unreleased]
+
+_Nothing yet._
+
+## [0.1.0] - 2026-09-01
+
+### Added
+- **Semantic-versioning release flow** — an annotated `vX.Y.Z` git tag is the
+  "ship it" action; `main` stays the integration branch.
+- **`.github/workflows/ci.yml`** — every PR and push to `main` runs `npm ci`
+  then `npm run build` (which type-checks first via `prebuild`).
+- **`.github/workflows/release.yml`** — a `vX.Y.Z` tag verifies the tag matches
+  `package.json` version, builds with the production Supabase env, promotes the
+  build to Cloudflare production (`wrangler deploy`), and publishes a GitHub
+  Release using this file's section for that version as the notes.
+- **`deploy` npm script** (`wrangler deploy`); `wrangler` added as a dev
+  dependency.
+
+### Changed
+- **Cloudflare no longer ships on every merge to `main`.** That build becomes a
+  non-promoted preview (`wrangler versions upload`); production only moves when a
+  version tag runs `release.yml`. Requires `CLOUDFLARE_API_TOKEN`,
+  `CLOUDFLARE_ACCOUNT_ID`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_ANON_KEY` as
+  GitHub Actions repository secrets.
+- `package.json` version set to `0.1.0` (was `0.0.0`).
+- This changelog reformatted to Keep a Changelog with version headings and
+  compare links; the `0.0.1` baseline keeps its per-PR grouping.
+
+## [0.0.1] - 2026-09-01
+
+First tagged baseline: everything merged to `main` via PRs #1–#37, before semver
+tagging was adopted. Entries below are grouped by the pull request that landed
+them.
 
 ## Sitewide logo + favicon + `<Logo />` — 2026-08-31
 
@@ -213,3 +249,7 @@ landed them on `main`.
 ### Added
 - Initial commit; Vite + React + TypeScript project scaffold ("Lotus Rewards
   App").
+
+[Unreleased]: https://github.com/djraj/lotus-rewards-app/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/djraj/lotus-rewards-app/compare/v0.0.1...v0.1.0
+[0.0.1]: https://github.com/djraj/lotus-rewards-app/releases/tag/v0.0.1

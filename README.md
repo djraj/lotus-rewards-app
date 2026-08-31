@@ -5,7 +5,7 @@ A community rewards app for Golden Lotus Healing Center: members earn Lotus Poin
 - **Frontend**: React 19 + Vite + TypeScript + Tailwind (via CDN), React Router (`HashRouter`)
 - **Backend**: [Supabase](https://supabase.com) — Postgres, Auth (email/password + magic link), Row Level Security, Storage (proof photos), RPC functions for point mutations
 - **Email**: [Brevo](https://www.brevo.com) — auth mail (magic link, signup confirmation, password reset) over SMTP; in-app notifications (task started/submitted/approved, redeem approved, reward sent) via the `notify` Edge Function. Setup: [`Docs/email-setup.md`](Docs/email-setup.md)
-- **Hosting**: Cloudflare Workers (static assets), auto-deploys on push to `main` via Workers Builds
+- **Hosting**: Cloudflare Workers (static assets). `main` builds a non-promoted preview; an annotated `vX.Y.Z` tag runs the release workflow that promotes to production and cuts a GitHub Release
 
 See [`Docs/production-migration-plan.md`](Docs/production-migration-plan.md) for the full architecture, schema, and security model.
 
@@ -75,13 +75,26 @@ update public.profiles set role = 'admin' where id = '<user-id>';
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Preview the production build locally |
 | `npm run predeploy` | Alias for `npm run build` (kept for an explicit local "check before I push" habit) |
+| `npm run deploy` | `wrangler deploy` — promote the current `dist/` to the live Worker (break-glass; normally the release workflow does this) |
 
 ## Type-checking is enforced on every build
 
-Vite transpiles via esbuild, which doesn't type-check — `vite build` alone can still produce a "successful" build with a broken type in it. `npm run build` has a `prebuild` script that runs `tsc --noEmit` first and fails the whole command if it doesn't pass, so this isn't just a local convention: **Cloudflare's Workers Build runs `npm run build` too**, so a real type error now fails the actual deploy, not just a local check someone forgot to run.
+Vite transpiles via esbuild, which doesn't type-check — `vite build` alone can still produce a "successful" build with a broken type in it. `npm run build` has a `prebuild` script that runs `tsc --noEmit` first and fails the whole command if it doesn't pass. CI (`.github/workflows/ci.yml`) runs `npm run build` on every PR and push to `main`, so a real type error fails the check, not just a local run someone forgot.
 
-## Deployment
+## Versioning & deployment
 
-Deploys are handled by Cloudflare Workers Builds: pushing to `main` triggers `npm run build` (type-check, then the Vite build) then `npx wrangler versions upload`, using `wrangler.toml` to serve `dist/` as static assets. `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` must be set as **build** variables in the Cloudflare dashboard (Worker → Settings → Build → Variables and secrets — distinct from "Runtime variables and secrets", which doesn't apply to a static-assets-only Worker).
+`main` is the integration branch. **An annotated `vX.Y.Z` tag is the release action** — see [`wiki/Deployment.md`](wiki/Deployment.md) for the full flow.
 
-The `notify` Edge Function and the Supabase schema are **not** part of the Cloudflare build — deploy schema changes with `npx supabase db push` and function changes with `npx supabase functions deploy notify`.
+- **Every PR / push to `main`** → `ci.yml`: `npm ci` + `npm run build`.
+- **Push to `main`** → Cloudflare Workers Builds, but as a *non-promoted preview* (`wrangler versions upload`) — not the live site.
+- **`vX.Y.Z` tag** → `release.yml`: verify tag == `package.json` version, verify a `## [x.y.z]` `CHANGELOG.md` section exists, build with the prod Supabase env, `wrangler deploy` to promote, then publish a GitHub Release. Needs `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` as Actions secrets.
+
+Cutting a release:
+
+```bash
+npm version <x.y.z> --no-git-tag-version   # bump package.json in its own PR
+# merge that PR, then:
+git tag -a v<x.y.z> -m "v<x.y.z>" && git push origin v<x.y.z>
+```
+
+The `notify` Edge Function and the Supabase schema are **not** part of this — deploy schema changes with `npx supabase db push` and function changes with `npx supabase functions deploy notify`.
