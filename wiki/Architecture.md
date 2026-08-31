@@ -31,13 +31,13 @@ flowchart TD
 
 - **React 19 + Vite + TypeScript.** Tailwind is loaded from its CDN;
   Font Awesome for icons.
-- **Branding.** The brand mark is static SVG in `public/` — `logo-mark.svg`
-  (lotus only, also the favicon) and `logo.svg` (lotus + "Golden Lotus Healing
+- **Branding.** The brand mark ships as static images in `public/` —
+  `logo-mark.png` (lotus only) and `logo.png` (lotus + "Golden Lotus Healing
   Center" lockup) — rendered through one `components/Logo.tsx` component so the
-  header, `Auth`, and `UpdatePassword` share a single source of truth. Favicon,
-  `apple-touch-icon`, and the email banner (`logo-email.png`, a raster because
-  mail clients don't render SVG) are generated from the same artwork. The app's
-  display name is **GLHC Rewards**.
+  header, `Auth`, and `UpdatePassword` share a single source of truth. The
+  favicon set, `apple-touch-icon` (gold lotus on the brand navy `#000745`), and
+  the email banner (`logo-email.png`) are generated from the same supplied
+  artwork. The app's display name is **GLHC Rewards**.
 - **React Router in `HashRouter` mode** — routes live after a `#`
   (`/#/tasks`, `/#/rewards`, `/#/admin`, `/#/admin/history`). This keeps the
   static‑asset host from needing SPA rewrite rules.

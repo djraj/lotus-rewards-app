@@ -9,7 +9,7 @@ classes.
 - **Live app:** https://lotus-rewards-app.jariarud.workers.dev/
 - **Version:** 1.0
 - **Brand:** the mark is a gold lotus. Assets live in `public/`
-  (`logo-mark.svg` lotus only, `logo.svg` lockup with the "Golden Lotus
+  (`logo-mark.png` lotus only, `logo.png` lockup with the "Golden Lotus
   Healing Center" wordmark, favicon set, and `logo-email.png` for email),
   surfaced through the single `components/Logo.tsx` component.
 
