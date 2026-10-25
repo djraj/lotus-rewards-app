@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Submission, User, RewardClaim, Reward } from '../types';
 import { supabase } from '../services/supabaseClient';
+import ContactInbox from './ContactInbox';
 
 interface Props {
   rewards: Reward[];
@@ -467,6 +468,8 @@ const AdminPanel: React.FC<Props> = ({ rewards, currentUserId, onUpdateStatus, o
               )}
             </div>
           </section>
+
+          <ContactInbox />
         </div>
 
         <div className="space-y-6">

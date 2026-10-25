@@ -1,20 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Reveal from './Reveal';
 import PageHeader from './PageHeader';
 import { ContactScene } from './Illustrations';
 import { CONTACT_DETAILS } from './centerInfo';
+import { supabase } from '../../services/supabaseClient';
 
-// Sample contact form - no backend wired up yet. It just confirms the
-// message locally so the page reads as finished rather than broken; a real
-// submit path (e.g. a Supabase table or email webhook) is future work.
+const MESSAGE_MAX = 2000;
+
+// Messages land in contact_messages via the submit_contact_message RPC, which
+// works signed out and does the real validation/throttling; admins read them
+// in the Admin panel inbox.
 const Contact: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  // Honeypot: hidden from people, but naive bots fill every field.
+  const [website, setWebsite] = useState('');
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const errorRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // The banner sits above the fields, often scrolled out of view on submit.
+  useEffect(() => {
+    if (error) errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [error]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    if (website) {
+      // Pretend it worked so the bot moves on; nothing is stored.
+      setSent(true);
+      return;
+    }
+    setSending(true);
+    const { error: rpcError } = await supabase.rpc('submit_contact_message', {
+      p_name: name,
+      p_email: email,
+      p_message: message,
+    });
+    setSending(false);
+    if (rpcError) {
+      // RPC validation errors are lowercase sentences; capitalise for display.
+      const text = rpcError.message || 'your message could not be sent. Please try again.';
+      setError(text.charAt(0).toUpperCase() + text.slice(1));
+      return;
+    }
     setSent(true);
   };
 
@@ -52,10 +84,29 @@ const Contact: React.FC = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div ref={errorRef} className="p-4 rounded-2xl bg-rose-50 text-rose-700 border border-rose-100 text-sm" role="alert">
+                  <i className="fa-solid fa-circle-exclamation mr-2"></i>
+                  {error}
+                </div>
+              )}
+              <div className="absolute -left-[9999px] w-px h-px overflow-hidden" aria-hidden="true">
+                <label>
+                  Website
+                  <input
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                  />
+                </label>
+              </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Name</label>
                 <input
                   required
+                  maxLength={100}
                   type="text"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
                   value={name}
@@ -67,6 +118,7 @@ const Contact: React.FC = () => {
                 <label className="block text-sm font-bold text-slate-700 mb-2">Email</label>
                 <input
                   required
+                  maxLength={254}
                   type="email"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
                   value={email}
@@ -79,14 +131,19 @@ const Contact: React.FC = () => {
                 <textarea
                   required
                   rows={5}
+                  maxLength={MESSAGE_MAX}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none resize-none"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="How can we help?"
                 />
+                <p className="text-right text-xs text-slate-400 mt-1">{message.length} / {MESSAGE_MAX}</p>
               </div>
-              <button className="w-full bg-rose-500 text-white py-3 rounded-2xl font-bold shadow-lg shadow-rose-200 hover:bg-rose-600 hover:-translate-y-0.5 transition-all">
-                Send message
+              <button
+                disabled={sending}
+                className="w-full bg-rose-500 text-white py-3 rounded-2xl font-bold shadow-lg shadow-rose-200 hover:bg-rose-600 hover:-translate-y-0.5 transition-all disabled:opacity-60 disabled:hover:translate-y-0"
+              >
+                {sending ? 'Sending...' : 'Send message'}
               </button>
             </form>
           )}

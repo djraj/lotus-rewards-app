@@ -77,6 +77,9 @@ CHANGELOG.md            Keep a Changelog; unreleased work under `## [Unreleased]
   RPC functions (`approve_submission`, `submit_task`, `request_reward`,
   `approve_reward_claim`, `send_reward`, `adjust_points`, `set_user_role`;
   `fulfil_reward_claim` likewise owns the fulfilment columns).
+- **`contact_messages`** is written only by `submit_contact_message` (the one
+  RPC granted to `anon`, so keep its validation + throttling) and
+  `set_contact_message_status` (admin). Don't add a direct insert policy.
   Never write `profiles.points` / `profiles.role` from the client, and never
   add a client-side path that does.
 - **Migrations are append-only.** Add a new timestamped file in
