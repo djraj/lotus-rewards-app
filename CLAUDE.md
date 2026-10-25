@@ -4,7 +4,9 @@ Guidance for Claude Code (and humans) working in this repository.
 
 ## What this is
 
-**GLHC Rewards** — a community rewards web app. Members earn Lotus
+**Golden Lotus Healing Centre (GLHC)** — the website of a Pranic Healing
+centre (public pages incl. a Donate page) plus **GLHC Member Rewards**, a
+community rewards app. Members earn Lotus
 Points by completing real-world tasks (submitted with a photo as proof);
 admins review submissions and award points; members redeem points in a
 rewards marketplace. Full picture: [`wiki/Home.md`](wiki/Home.md) and
@@ -37,8 +39,10 @@ type-check is the only automated gate — `.github/workflows/ci.yml` runs
 App.tsx                 session + the signed-in user's own data; routes
 components/              one file per screen (Dashboard, TasksView, RewardsView,
                         AdminPanel, AdminHistory, Auth, UpdatePassword, TaskSubmissionModal)
-components/public/      signed-out site: PublicLayout, Home, AboutUs, Services, Contact,
-                        Illustrations (inline SVG art), Reveal (scroll fade-in)
+components/public/      signed-out centre site: PublicLayout, Home, AboutUs, Workshops,
+                        Seminars, Services, Donate, Contact, PageHeader, Illustrations
+                        (inline SVG art), Reveal (scroll fade-in), centreInfo.ts (contact +
+                        bank details - placeholders until the centre supplies them)
 index.html              also holds the gl-* keyframes / motion classes (Tailwind is CDN-only)
 services/               supabaseClient.ts, image.ts (proof-photo compression),
                         authCallback.ts (magic/recovery redirect handling)

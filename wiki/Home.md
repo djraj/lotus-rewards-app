@@ -1,6 +1,9 @@
-# GLHC Rewards
+# Golden Lotus Healing Centre (GLHC)
 
-A community rewards web app for **Golden Lotus Healing Center**. Members earn
+The website of the **Golden Lotus Healing Centre (GLHC)**, a Pranic Healing
+centre. Signed out, visitors see the centre's public pages — Home, About,
+Workshops, Seminars, Services, Donate and Contact. Signed in, **GLHC Member
+Rewards** takes over: members earn
 **Lotus Points** by completing real‑world tasks and submitting a photo as
 proof; admins review each submission and award the points; members spend
 points in a rewards marketplace on sessions, products, workshops, and review

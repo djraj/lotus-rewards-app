@@ -122,8 +122,8 @@ const Auth: React.FC = () => {
       <div className="relative w-full max-w-md lg:max-w-4xl grid lg:grid-cols-2 bg-white rounded-3xl shadow-xl shadow-rose-100/60 border border-slate-100 overflow-hidden gl-fade-up">
         <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-rose-500 to-amber-500 p-10 text-white relative overflow-hidden">
           <div className="relative">
-            <h2 className="text-3xl font-serif font-bold leading-snug">Every small step counts.</h2>
-            <p className="mt-3 text-rose-50">Complete tasks, earn Lotus Points, and redeem rewards with your community.</p>
+            <h2 className="text-3xl font-serif font-bold leading-snug">Welcome to the GLHC member area.</h2>
+            <p className="mt-3 text-rose-50">Sign in to GLHC Member Rewards - log your community tasks, earn Lotus Points and redeem them for sessions, workshops and more.</p>
           </div>
           <div className="relative bg-white/15 rounded-3xl p-4 backdrop-blur-sm">
             <LotusHero className="w-full h-auto" />

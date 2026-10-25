@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
 import Reveal from './Reveal';
-import { ContactScene, FloatingPetals, WaveDivider } from './Illustrations';
-
-const CONTACT_DETAILS = [
-  { icon: 'fa-envelope', label: 'Email', value: 'hello@glhcrewards.example' },
-  { icon: 'fa-phone', label: 'Phone', value: '(555) 010-2024' },
-  { icon: 'fa-location-dot', label: 'Address', value: '123 Lotus Way, Serenity Springs' },
-];
+import PageHeader from './PageHeader';
+import { ContactScene } from './Illustrations';
+import { CONTACT_DETAILS } from './centreInfo';
 
 // Sample contact form - no backend wired up yet. It just confirms the
 // message locally so the page reads as finished rather than broken; a real
@@ -24,20 +20,10 @@ const Contact: React.FC = () => {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-gradient-to-b from-rose-50 to-slate-50">
-        <FloatingPetals />
-        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-6 md:pt-20 text-center">
-          <p className="gl-fade-up text-rose-500 font-semibold text-sm uppercase tracking-widest">Contact</p>
-          <h1 className="gl-fade-up mt-3 text-4xl md:text-5xl font-serif font-bold text-slate-800" style={{ animationDelay: '0.1s' }}>
-            Get in Touch
-          </h1>
-          <p className="gl-fade-up mt-6 text-lg text-slate-500" style={{ animationDelay: '0.2s' }}>
-            Questions about GLHC Rewards, a task, or your account? Reach out and we will get back to
-            you.
-          </p>
-        </div>
-        <WaveDivider fill="#f8fafc" />
-      </section>
+      <PageHeader eyebrow="Contact" title="Get in Touch">
+        Want to book a healing session, ask about the next workshop, or find out how to volunteer?
+        We'd love to hear from you.
+      </PageHeader>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-5 gap-10">
         <Reveal className="md:col-span-2 space-y-6">

@@ -251,30 +251,28 @@ export const SpotIllustration: React.FC<{ icon: string; tone?: keyof typeof SPOT
   </div>
 );
 
-// A stylised glimpse of the member app, floating beside the hero art. The
-// numbers are illustrative, not live data.
-export const AppPreviewCards: React.FC = () => (
+// Two small cards floating beside the hero art, naming what the centre does.
+export const HeroBadges: React.FC = () => (
   <>
-    <div className="absolute left-0 top-10 md:-left-6 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl shadow-rose-100 border border-rose-50 p-4 w-48 gl-float">
-      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Lotus Points</p>
-      <p className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-        120 <i className="fa-solid fa-leaf text-rose-400 text-base"></i>
-      </p>
-      <div className="mt-2 h-2 rounded-full bg-rose-50 overflow-hidden">
-        <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-rose-400 to-amber-400" />
-      </div>
-      <p className="text-[11px] text-slate-400 mt-1">30 to your next reward</p>
-    </div>
-    <div
-      className="absolute right-0 bottom-16 md:-right-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl shadow-emerald-100 border border-emerald-50 p-3 pr-5 flex items-center gap-3 gl-float"
-      style={{ animationDelay: '2.5s' }}
-    >
-      <span className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
-        <i className="fa-solid fa-check"></i>
+    <div className="absolute left-0 top-10 md:-left-6 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl shadow-rose-100 border border-rose-50 p-3 pr-5 flex items-center gap-3 gl-float">
+      <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-rose-500 text-white flex items-center justify-center">
+        <i className="fa-solid fa-hand-sparkles"></i>
       </span>
       <div>
-        <p className="text-sm font-bold text-slate-800">Task approved</p>
-        <p className="text-xs text-emerald-600 font-semibold">+50 Lotus Points</p>
+        <p className="text-sm font-bold text-slate-800">No-touch energy healing</p>
+        <p className="text-xs text-slate-500">Complements medical care</p>
+      </div>
+    </div>
+    <div
+      className="absolute right-0 bottom-16 md:-right-4 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl shadow-amber-100 border border-amber-50 p-3 pr-5 flex items-center gap-3 gl-float"
+      style={{ animationDelay: '2.5s' }}
+    >
+      <span className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-400 text-white flex items-center justify-center">
+        <i className="fa-solid fa-leaf"></i>
+      </span>
+      <div>
+        <p className="text-sm font-bold text-slate-800">Members earn Lotus Points</p>
+        <p className="text-xs text-slate-500">For serving the community</p>
       </div>
     </div>
   </>

@@ -1,6 +1,6 @@
-# GLHC Rewards
+# Golden Lotus Healing Centre (GLHC)
 
-A community rewards app for Golden Lotus Healing Center: members earn Lotus Points by completing tasks (submitted with a photo as proof), redeem points for sessions/products/workshops/reviews, and admins review submissions and manage balances.
+The website of the **Golden Lotus Healing Centre (GLHC)**, a Pranic Healing centre: public pages for its workshops, seminars, healing services and donations, plus **GLHC Member Rewards** — members earn Lotus Points by completing community tasks (submitted with a photo as proof), redeem points for sessions/products/workshops/reviews, and admins review submissions and manage balances.
 
 - **Frontend**: React 19 + Vite + TypeScript + Tailwind (via CDN), React Router (`HashRouter`)
 - **Backend**: [Supabase](https://supabase.com) — Postgres, Auth (email/password + magic link), Row Level Security, Storage (proof photos), RPC functions for point mutations

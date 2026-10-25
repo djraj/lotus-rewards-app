@@ -43,13 +43,30 @@ the version and date.
   The signed-out pages looked plain — no imagery, no motion. They now have
   brand illustrations drawn as inline SVG (a lotus-on-a-pond hero, a
   seed → sprout → bloom story scene, spot illustrations per service, an
-  envelope scene on Contact, floating "app preview" cards), soft gradient
+  envelope scene on Contact, floating hero badges), soft gradient
   backgrounds and wave dividers, and a dark footer with links. Motion:
   scroll-reveal with stagger, drifting petals, a breathing lotus and pond
   ripples, card hover-lift, a fade between pages, and a nav that gains a
   shadow on scroll. The sign-in screen gets an illustrated panel on desktop.
   All decorative motion is off under `prefers-reduced-motion`. No new
   dependencies or external image hosts.
+- **Rebranded as the Golden Lotus Healing Centre (GLHC) website**
+  ([#42](https://github.com/djraj/lotus-rewards-app/issues/42)). The public
+  site now presents a Pranic Healing centre rather than only a rewards app:
+  new **Workshops** (healing and spiritual series), **Seminars** and
+  reorganised **Services** (treatments, scanning & counselling, home &
+  prosperity) pages, a Home page with a "begin your journey" topic grid,
+  the three offerings, a "what is Pranic Healing" session strip, and a
+  member-rewards section. The signed-in area is now called **GLHC Member
+  Rewards**; page title, footer and sign-in copy updated. Services carries a
+  complementary-therapy disclaimer. Layout inspired by the Prana World
+  Malaysia site; all wording is original.
+- **Donate page** — bank-transfer details with copy buttons and a DuitNow QR
+  slot. Contact and bank details live in `components/public/centreInfo.ts`
+  and are **placeholders** until the centre supplies the real ones; the QR
+  shows "coming soon" until `public/duitnow-qr.png` is added.
+- Desktop nav now appears from the `lg` breakpoint (it has seven links); the
+  hamburger menu covers tablet and phone.
 - **Mobile menu closes on any route change** (back/forward, in-page links),
   not only when a menu item is tapped; each public page now opens scrolled to
   the top.

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import Logo from '../Logo';
+import { CENTRE_NAME, CENTRE_SHORT_NAME, CENTRE_TAGLINE, CONTACT_DETAILS } from './centreInfo';
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   isActive
@@ -9,14 +10,17 @@ const navClass = ({ isActive }: { isActive: boolean }) =>
 
 const NAV_ITEMS: { to: string; label: string; end?: boolean }[] = [
   { to: '/', label: 'Home', end: true },
-  { to: '/about', label: 'About Us' },
+  { to: '/about', label: 'About' },
+  { to: '/workshops', label: 'Workshops' },
+  { to: '/seminars', label: 'Seminars' },
   { to: '/services', label: 'Services' },
+  { to: '/donate', label: 'Donate' },
   { to: '/contact', label: 'Contact' },
 ];
 
 // Public-facing shell for signed-out visitors: nav + footer around a routed
-// page (Home / About Us / Services / Contact). "Login" is a CTA button, not a
-// page rendered inside this layout - it routes to the standalone Auth screen.
+// centre page. "Login" is a CTA button, not a page rendered inside this
+// layout - it routes to the standalone Auth screen (the member area).
 const PublicLayout: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -50,7 +54,7 @@ const PublicLayout: React.FC = () => {
               <Logo className="h-10 w-auto" />
             </NavLink>
 
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden lg:flex items-center space-x-6">
               {NAV_ITEMS.map((item) => (
                 <NavLink key={item.to} to={item.to} end={item.end} className={navClass}>
                   {item.label}
@@ -58,7 +62,7 @@ const PublicLayout: React.FC = () => {
               ))}
             </div>
 
-            <div className="hidden md:flex items-center">
+            <div className="hidden lg:flex items-center gap-3">
               <NavLink
                 to="/login"
                 className="bg-rose-500 text-white px-5 py-2 rounded-full font-bold hover:bg-rose-600 transition-all"
@@ -69,7 +73,7 @@ const PublicLayout: React.FC = () => {
 
             <button
               type="button"
-              className="md:hidden p-2 text-slate-600"
+              className="lg:hidden p-2 text-slate-600"
               onClick={() => setMenuOpen((open) => !open)}
               aria-label="Toggle menu"
               aria-expanded={menuOpen}
@@ -79,7 +83,7 @@ const PublicLayout: React.FC = () => {
           </div>
 
           {menuOpen && (
-            <div className="md:hidden flex flex-col gap-4 pb-6">
+            <div className="lg:hidden flex flex-col gap-4 pb-6">
               {NAV_ITEMS.map((item) => (
                 <NavLink
                   key={item.to}
@@ -115,8 +119,15 @@ const PublicLayout: React.FC = () => {
               <Logo className="h-9 w-auto" />
             </div>
             <p className="mt-4 text-sm leading-relaxed max-w-xs">
-              The community rewards program of the Golden Lotus Healing Center.
+              {CENTRE_NAME} - Pranic Healing, seminars and workshops for body, mind and spirit.
             </p>
+            <ul className="mt-4 space-y-1 text-sm">
+              {CONTACT_DETAILS.map((c) => (
+                <li key={c.label}>
+                  <i className={`fa-solid ${c.icon} w-5 text-rose-300`}></i> {c.value}
+                </li>
+              ))}
+            </ul>
           </div>
           <div>
             <p className="text-white font-semibold mb-4">Explore</p>
@@ -132,7 +143,7 @@ const PublicLayout: React.FC = () => {
           </div>
           <div>
             <p className="text-white font-semibold mb-4">Members</p>
-            <p className="text-sm mb-4">Log in to track tasks, earn Lotus Points, and redeem rewards.</p>
+            <p className="text-sm mb-4">Log in to GLHC Member Rewards to log tasks, earn Lotus Points, and redeem rewards.</p>
             <NavLink
               to="/login"
               className="inline-block bg-rose-500 text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-rose-600 transition-all"
@@ -142,7 +153,7 @@ const PublicLayout: React.FC = () => {
           </div>
         </div>
         <div className="border-t border-white/10 py-5 text-center text-xs">
-          <p>&copy; 2026 GLHC Rewards. Nurturing growth, one step at a time.</p>
+          <p>&copy; 2026 {CENTRE_NAME} ({CENTRE_SHORT_NAME}). {CENTRE_TAGLINE}</p>
         </div>
       </footer>
     </div>
