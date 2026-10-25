@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import Reveal from './Reveal';
 import PageHeader from './PageHeader';
 import { GrowthScene } from './Illustrations';
+import { TEAM, TEAM_IS_SAMPLE, type TeamMember } from './centerInfo';
 
 const VALUES = [
   {
@@ -24,6 +25,53 @@ const VALUES = [
     tone: 'from-emerald-400 to-teal-500',
   },
 ];
+
+const AVATAR_TONES = [
+  'from-rose-400 to-rose-500',
+  'from-amber-400 to-orange-400',
+  'from-emerald-400 to-teal-500',
+  'from-sky-400 to-indigo-400',
+  'from-violet-400 to-purple-500',
+  'from-pink-400 to-rose-500',
+];
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
+    .join('');
+
+// Photo when one is supplied, otherwise a gradient initials avatar with a
+// small lotus badge - so the grid looks finished before real photos exist.
+const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, index }) => (
+  <div className="gl-lift group h-full bg-white rounded-3xl border border-slate-100 shadow-sm p-7 text-center">
+    <div className="relative mx-auto w-28 h-28">
+      <span className="absolute inset-0 rounded-full bg-rose-100 gl-breathe" aria-hidden="true" />
+      {member.photo ? (
+        <img
+          src={member.photo}
+          alt={member.name}
+          className="relative w-28 h-28 rounded-full object-cover ring-4 ring-white shadow-lg"
+        />
+      ) : (
+        <span
+          className={`relative w-28 h-28 rounded-full bg-gradient-to-br ${AVATAR_TONES[index % AVATAR_TONES.length]} text-white text-3xl font-serif font-bold flex items-center justify-center ring-4 ring-white shadow-lg`}
+          aria-hidden="true"
+        >
+          {initials(member.name)}
+        </span>
+      )}
+      <span className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center text-amber-500 transition-transform group-hover:rotate-12">
+        <i className="fa-solid fa-spa"></i>
+      </span>
+    </div>
+    <h3 className="mt-5 text-lg font-bold text-slate-800">{member.name}</h3>
+    <p className="text-sm font-semibold text-rose-500">{member.role}</p>
+    <p className="mt-3 text-sm text-slate-500 leading-relaxed">{member.bio}</p>
+  </div>
+);
 
 const AboutUs: React.FC = () => (
   <div>
@@ -70,6 +118,29 @@ const AboutUs: React.FC = () => (
           </div>
         </Reveal>
       </div>
+
+      <section className="max-w-6xl mx-auto mb-20">
+        <Reveal className="text-center max-w-2xl mx-auto mb-12">
+          <p className="text-rose-500 font-semibold text-sm uppercase tracking-widest">Our team</p>
+          <h2 className="mt-3 text-3xl md:text-4xl font-serif font-bold text-slate-800">The people behind the center</h2>
+          <p className="mt-4 text-slate-500">
+            Healers, teachers and volunteers who give their time so others can heal and grow.
+          </p>
+          {TEAM_IS_SAMPLE && (
+            <span className="inline-block mt-4 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-3 py-1 rounded-full">
+              <i className="fa-solid fa-circle-info mr-1"></i>
+              Sample profiles - our team will be introduced here soon
+            </span>
+          )}
+        </Reveal>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {TEAM.map((member, i) => (
+            <Reveal key={`${member.name}-${member.role}`} delay={(i % 3) * 120}>
+              <TeamCard member={member} index={i} />
+            </Reveal>
+          ))}
+        </div>
+      </section>
 
       <Reveal className="max-w-4xl mx-auto bg-slate-900 text-white rounded-[2rem] p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
         <span className="shrink-0 w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-400 to-rose-500 flex items-center justify-center text-3xl shadow-xl">

@@ -47,8 +47,10 @@ flowchart TD
   (`/#/`), `AboutUs` (`/#/about`), `Workshops` (`/#/workshops`), `Seminars`
   (`/#/seminars`), `Services` (`/#/services`), `Donate` (`/#/donate`) and
   `Contact` (`/#/contact`) — plus the standalone sign-in screen at
-  `/#/login`. The center's contact and bank details (and the DuitNow QR path,
-  `public/duitnow-qr.png`) live in one file, `components/public/centerInfo.ts`.
+  `/#/login`. The center's contact and bank details, the About-page team list
+  (`TEAM`, sample data until `TEAM_IS_SAMPLE` is set to `false`), and the
+  DuitNow QR path (`public/duitnow-qr.png`) live in one file,
+  `components/public/centerInfo.ts`.
   Signed
   in, it renders the member app. Each tree has a catch-all that redirects to
   its own `/`, so a URL from the other tree never renders blank.

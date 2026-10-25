@@ -65,6 +65,12 @@ the version and date.
   slot. Contact and bank details live in `components/public/centerInfo.ts`
   and are **placeholders** until the center supplies the real ones; the QR
   shows "coming soon" until `public/duitnow-qr.png` is added.
+- **"Our team" section on About** — a card per team member (name, role, short
+  bio) with a gradient initials avatar, or a photo once `photo` is set. The
+  six people listed are **sample profiles** from `TEAM` in
+  `components/public/centerInfo.ts`; while `TEAM_IS_SAMPLE` is `true` the
+  section shows a "sample profiles" notice so a deployed build never presents
+  them as real staff.
 - Desktop nav now appears from the `lg` breakpoint (it has seven links); the
   hamburger menu covers tablet and phone.
 - **Mobile menu closes on any route change** (back/forward, in-page links),
