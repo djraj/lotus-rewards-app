@@ -19,6 +19,17 @@ the version and date.
 - **Contact page form is a placeholder** — it confirms locally but does not
   send anything yet, and the email / phone / address shown are sample values
   to be replaced before release.
+- **Reward fulfilment tracking** ([#21](https://github.com/djraj/lotus-rewards-app/issues/21)).
+  Approved redemptions and gifts used to stop at *Approved*, so members
+  couldn't tell when (or how) they'd actually get the reward. Admins now have
+  an **Awaiting Fulfilment** queue where they mark a claim fulfilled with an
+  optional delivery note (voucher code, booking link); members see
+  *Approved · on its way* → *Fulfilled* plus the note on the Rewards screen,
+  and Admin History shows who fulfilled it and when. Backed by migration
+  `20260905000000_reward_fulfilment.sql` (`fulfilled_at`, `fulfilled_by`,
+  `delivery_note` on `reward_claims`) and the admin-only
+  `fulfil_reward_claim` RPC. Fulfilment is recorded beside `status` rather
+  than as a new status so the status-triggered emails don't re-fire.
 
 ### Fixed
 - **Failed magic links show their error again.** With the public home page at

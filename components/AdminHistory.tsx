@@ -26,6 +26,9 @@ const mapClaim = (row: any): RewardClaim => ({
   status: row.status,
   remark: row.remark,
   grantedBy: row.granted_by,
+  fulfilledAt: row.fulfilled_at,
+  fulfilledBy: row.fulfilled_by,
+  deliveryNote: row.delivery_note,
   timestamp: row.created_at,
 });
 
@@ -210,6 +213,27 @@ const AdminHistory: React.FC = () => {
                       <p className="text-sm text-slate-600 italic mt-2 bg-white border border-slate-200 rounded-xl p-3">
                         "{claim.remark}"
                       </p>
+                    )}
+                    {claim.status === 'approved' && (
+                      claim.fulfilledAt ? (
+                        <div className="mt-2">
+                          <p className="text-xs text-sky-600 font-semibold">
+                            <i className="fa-solid fa-truck-fast mr-1"></i>
+                            Fulfilled {new Date(claim.fulfilledAt).toLocaleString()}
+                            {claim.fulfilledBy && ` by ${userName(claim.fulfilledBy)}`}
+                          </p>
+                          {claim.deliveryNote && (
+                            <p className="text-sm text-slate-600 mt-2 bg-sky-50 border border-sky-100 rounded-xl p-3 break-words">
+                              {claim.deliveryNote}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-amber-600 font-semibold mt-2">
+                          <i className="fa-solid fa-hourglass-half mr-1"></i>
+                          Awaiting fulfilment
+                        </p>
+                      )
                     )}
                   </div>
                 ))}

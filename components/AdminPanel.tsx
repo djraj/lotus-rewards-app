@@ -22,6 +22,9 @@ const mapClaim = (row: any): RewardClaim => ({
   status: row.status,
   remark: row.remark,
   grantedBy: row.granted_by,
+  fulfilledAt: row.fulfilled_at,
+  fulfilledBy: row.fulfilled_by,
+  deliveryNote: row.delivery_note,
   timestamp: row.created_at,
 });
 
@@ -60,6 +63,11 @@ const AdminPanel: React.FC<Props> = ({ rewards, currentUserId, onUpdateStatus, o
   const [claims, setClaims] = useState<RewardClaim[]>([]);
   const [reviewingClaimId, setReviewingClaimId] = useState<string | null>(null);
 
+  // Approved (or gifted) redemptions the member hasn't received yet.
+  const [unfulfilled, setUnfulfilled] = useState<RewardClaim[]>([]);
+  const [deliveryNotes, setDeliveryNotes] = useState<{ [claimId: string]: string }>({});
+  const [fulfillingId, setFulfillingId] = useState<string | null>(null);
+
   const [sendUserId, setSendUserId] = useState('');
   const [sendRewardId, setSendRewardId] = useState('');
   const [sendRemark, setSendRemark] = useState('');
@@ -86,8 +94,12 @@ const AdminPanel: React.FC<Props> = ({ rewards, currentUserId, onUpdateStatus, o
   };
 
   const loadClaims = async () => {
-    const { data } = await supabase.from('reward_claims').select('*').eq('status', 'pending').order('created_at');
-    setClaims((data ?? []).map(mapClaim));
+    const [{ data: pending }, { data: approved }] = await Promise.all([
+      supabase.from('reward_claims').select('*').eq('status', 'pending').order('created_at'),
+      supabase.from('reward_claims').select('*').eq('status', 'approved').is('fulfilled_at', null).order('created_at'),
+    ]);
+    setClaims((pending ?? []).map(mapClaim));
+    setUnfulfilled((approved ?? []).map(mapClaim));
   };
 
   useEffect(() => {
@@ -152,6 +164,28 @@ const AdminPanel: React.FC<Props> = ({ rewards, currentUserId, onUpdateStatus, o
       setActionError(err instanceof Error ? err.message : 'Failed to update this redemption request.');
     } finally {
       setReviewingClaimId(null);
+    }
+  };
+
+  const handleFulfil = async (id: string) => {
+    setFulfillingId(id);
+    setActionError(null);
+    try {
+      const { error } = await supabase.rpc('fulfil_reward_claim', {
+        p_claim_id: id,
+        p_note: deliveryNotes[id]?.trim() ?? '',
+      });
+      if (error) throw error;
+      setDeliveryNotes(prev => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+      await loadClaims();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to mark this reward fulfilled.');
+    } finally {
+      setFulfillingId(null);
     }
   };
 
@@ -222,6 +256,7 @@ const AdminPanel: React.FC<Props> = ({ rewards, currentUserId, onUpdateStatus, o
       const userName = profiles.find(p => p.id === sendUserId)?.name ?? 'user';
       setSendSuccess(`Sent ${rewardTitle} to ${userName}.`);
       setSendRemark('');
+      await loadClaims();
       setTimeout(() => setSendSuccess(null), 4000);
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'Failed to send this reward.');
@@ -370,6 +405,64 @@ const AdminPanel: React.FC<Props> = ({ rewards, currentUserId, onUpdateStatus, o
                 <div className="text-center py-12 text-slate-400">
                   <i className="fa-solid fa-circle-check text-4xl mb-3 block opacity-20"></i>
                   <p>All clear! No pending redemption requests.</p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+              <i className="fa-solid fa-truck-fast text-slate-400"></i>
+              Awaiting Fulfilment
+            </h3>
+            <p className="text-sm text-slate-400 mb-6">
+              Approved and gifted rewards the member hasn't received yet. Add a voucher code or booking link if there is one.
+            </p>
+
+            <div className="space-y-4">
+              {unfulfilled.length > 0 ? (
+                unfulfilled.map((claim) => {
+                  const member = profiles.find(p => p.id === claim.userId);
+                  return (
+                    <div key={claim.id} className="p-6 rounded-3xl bg-slate-50 border border-slate-100 space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          {member?.avatar && <img src={member.avatar} className="w-10 h-10 rounded-full" alt="" />}
+                          <div>
+                            <p className="font-bold text-slate-800">{claim.rewardTitle}</p>
+                            <p className="text-xs text-slate-400">
+                              {member?.name ?? 'Unknown user'} &middot; {new Date(claim.timestamp).toLocaleString()}
+                              {claim.grantedBy && ' · gift'}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="bg-emerald-50 text-emerald-600 border border-emerald-100 text-xs font-bold px-3 py-1 rounded-full">
+                          Approved
+                        </span>
+                      </div>
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <input
+                          type="text"
+                          placeholder="Delivery note (optional) - voucher code, booking link..."
+                          className="flex-1 bg-white border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-rose-200 outline-none"
+                          value={deliveryNotes[claim.id] ?? ''}
+                          onChange={(e) => setDeliveryNotes(prev => ({ ...prev, [claim.id]: e.target.value }))}
+                        />
+                        <button
+                          onClick={() => handleFulfil(claim.id)}
+                          disabled={fulfillingId === claim.id}
+                          className="bg-sky-500 text-white px-5 py-3 rounded-xl text-sm font-semibold hover:bg-sky-600 transition-all disabled:opacity-50 whitespace-nowrap"
+                        >
+                          {fulfillingId === claim.id ? 'Saving...' : 'Mark Fulfilled'}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-12 text-slate-400">
+                  <i className="fa-solid fa-circle-check text-4xl mb-3 block opacity-20"></i>
+                  <p>Every approved reward has been delivered.</p>
                 </div>
               )}
             </div>
@@ -565,9 +658,13 @@ const AdminPanel: React.FC<Props> = ({ rewards, currentUserId, onUpdateStatus, o
                 <span className="text-slate-400">Total Submissions</span>
                 <span className="font-bold">{allSubmissions.length}</span>
               </div>
-              <div className="flex justify-between items-center py-3">
+              <div className="flex justify-between items-center py-3 border-b border-white/10">
                 <span className="text-slate-400">Pending Redemptions</span>
                 <span className="font-bold text-amber-400">{claims.length}</span>
+              </div>
+              <div className="flex justify-between items-center py-3">
+                <span className="text-slate-400">Awaiting Fulfilment</span>
+                <span className="font-bold text-sky-400">{unfulfilled.length}</span>
               </div>
             </div>
           </section>

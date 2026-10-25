@@ -41,6 +41,9 @@ const mapRewardClaim = (row: any): RewardClaim => ({
   status: row.status,
   remark: row.remark,
   grantedBy: row.granted_by,
+  fulfilledAt: row.fulfilled_at,
+  fulfilledBy: row.fulfilled_by,
+  deliveryNote: row.delivery_note,
   timestamp: row.created_at,
 });
 
