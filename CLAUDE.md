@@ -63,8 +63,8 @@ CHANGELOG.md            Keep a Changelog; unreleased work under `## [Unreleased]
 - **Branches:** `feature/<slug>` or `<issue#>-<slug>` (e.g. `13-nav-bar-active-section`).
 - **PRs:** one issue per PR where practical; body starts with `Closes #<issue>`.
 - **Issues:** every new issue goes on the **Golden Lotus Roadmap** project
-  and gets a milestone. Pick the milestone that fits the scope (`v0.1.0` /
-  `v0.2.0` / `v0.3.0`, or `Backlog` if unscheduled) and say which one you
+  and gets a milestone. Pick the milestone that fits the scope (`v1.0.0` /
+  `v2.0.0` / `v3.0.0`, or `Backlog` if unscheduled) and say which one you
   chose and why when you report the issue:
   `gh issue create … --milestone "<milestone>" --project "Golden Lotus Roadmap"`
   (or afterwards: `gh issue edit <n> --milestone "<milestone>"` and
@@ -142,7 +142,9 @@ editing the files here is the source-of-truth step; the sync is separate.
 ## Roadmap
 
 Tracked in GitHub Project **Golden Lotus Roadmap**
-(`https://github.com/users/djraj/projects/2`), milestones `v0.1.0` / `v0.2.0`
-/ `v0.3.0` / Backlog. Releases are semver git tags (`vX.Y.Z`) — see
+(`https://github.com/users/djraj/projects/2`), milestones `v1.0.0` / `v2.0.0`
+/ `v3.0.0` (major releases) / Backlog. Finished work ships before its
+milestone closes as minor releases (`vX.Y.0`), patches as `vX.Y.Z`; the major
+tag is cut when its milestone is empty. Releases are semver git tags — see
 [`wiki/Deployment.md`](wiki/Deployment.md). Unreleased changelog entries go
 under `## [Unreleased]`; a release renames that heading and tags the commit.

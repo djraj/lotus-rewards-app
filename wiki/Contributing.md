@@ -6,9 +6,12 @@ How work moves from an idea to `main` in this project.
 
 GitHub Project **[Golden Lotus Roadmap](https://github.com/users/djraj/projects/2)**.
 
-- **Milestones are releases:** `v0.1.0` (self-service & feedback), `v0.2.0`
-  (community & engagement), `v0.3.0` (scale & hardening), plus **Backlog** for
-  unscheduled items.
+- **Milestones are major releases:** `v1.0.0` (self-service & feedback),
+  `v2.0.0` (community & engagement), `v3.0.0` (scale & hardening), plus
+  **Backlog** for unscheduled items. Work doesn't wait for the milestone:
+  finished issues ship along the way as **minor releases** (`v0.2.0`,
+  `v0.3.0`, … then `v1.1.0`, …), and patches as `vX.Y.Z`. The major tag is cut
+  once every issue in its milestone is closed.
 - **Issues** are one per feature / fix, each with scope and acceptance
   criteria. Labels: `type:*`, `area:*`, `P1`–`P3`, `effort:*`.
 - Two views: **Roadmap** (grouped by milestone, sorted by priority) and
