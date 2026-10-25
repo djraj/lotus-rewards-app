@@ -14,6 +14,7 @@ This page is the summary; the migrations are the source of truth.
 | `submissions` | A task attempt | `user_id`, `task_id`, `task_title` (snapshot), `proof_note`, `proof_image_path`, `points_awarded`, `status`, `created_at`, `updated_at` |
 | `reward_claims` | A redemption or gift | `user_id`, `reward_id`, `reward_title`, `cost`, `status`, `remark`, `granted_by`, `fulfilled_at`, `fulfilled_by`, `delivery_note`, `created_at` |
 | `points_adjustments` | Audit — manual point changes | `user_id`, `admin_id`, `amount`, `remark` |
+| `contact_messages` | Messages from the public Contact page | `name`, `email`, `message`, `user_id` (if the sender was signed in), `status` (`open` \| `handled`), `handled_at`, `handled_by`, `created_at` |
 | `role_changes` | Audit — role changes | `user_id`, `admin_id`, `old_role`, `new_role` |
 | `private.email_config` | Where triggers send email webhooks | `function_url`, `webhook_secret` |
 
@@ -45,6 +46,10 @@ RLS is enabled on every table. Highlights:
   rows are created only by RPC.
 - **Storage `proof-photos`** — you may upload to, read, and delete only a path
   under your own `user_id` folder; admins may read any.
+- **`contact_messages`** — admins read; nobody inserts or updates directly.
+  Visitors (signed out, via the anon key) can only call
+  `submit_contact_message`; admins change status via
+  `set_contact_message_status`.
 - **Audit tables** — you read rows about yourself, admins read all; no client
   insert.
 
@@ -61,6 +66,8 @@ role checks.
 | `approve_reward_claim(claim_id, decision)` | admin | on approve, re‑checks the user's **current** balance then `points -= cost`; on reject, nothing |
 | `send_reward(user_id, reward_id, remark)` | admin | inserts an `approved` claim with `granted_by`; **no deduction**; remark required |
 | `fulfil_reward_claim(claim_id, note)` | admin | `approved` claims only; sets `fulfilled_at` / `fulfilled_by` and the trimmed note (blank → null); repeat calls are a no‑op |
+| `submit_contact_message(name, email, message)` | **anyone, incl. signed out** (`anon`) | trims + validates (required, email format, name ≤ 100, message ≤ 2000); throttles 3 per email per hour and 30 site‑wide per 10 minutes; records `user_id` if signed in |
+| `set_contact_message_status(message_id, status)` | admin | `open` \| `handled`; sets / clears `handled_at` + `handled_by`. Execute revoked from `anon` |
 | `adjust_points(user_id, amount, remark)` | admin | `points = max(0, points + amount)`; writes `points_adjustments`; remark required |
 | `set_user_role(user_id, role)` | admin | changes another user's role (never your own); writes `role_changes` |
 

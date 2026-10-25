@@ -48,6 +48,15 @@ note** — a voucher code, booking link, or pick‑up instruction — and choose
 their Rewards screen; History records who fulfilled it and when. Fulfilment
 can't be undone from the UI and doesn't send an email.
 
+## Contact Messages
+
+Messages sent from the public **Contact** page, newest first: sender name,
+email (click to reply in your mail app), time, whether they were signed in,
+and the message. Reply by email, then choose **Mark handled** — the message
+leaves the open list (it stays in the database with who handled it and
+when). There's no email alert for new messages yet, so check this section
+regularly.
+
 ## Quick Adjust
 
 Add or subtract points for any user. A **remark is required** and every change

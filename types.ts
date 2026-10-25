@@ -53,3 +53,15 @@ export interface User {
   points: number;
   role: 'user' | 'admin';
 }
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  userId: string | null;
+  status: 'open' | 'handled';
+  handledAt: string | null;
+  handledBy: string | null;
+  timestamp: string;
+}

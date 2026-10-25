@@ -9,7 +9,18 @@ the version and date.
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+- **The Contact form now actually sends**
+  ([#45](https://github.com/djraj/lotus-rewards-app/issues/45)). It used to
+  show "Message sent" while storing nothing. Messages now go to a new
+  `contact_messages` table through the `submit_contact_message` RPC, which
+  works signed out, validates and trims input, and throttles repeat sends
+  (3 per email per hour, 30 site-wide per 10 minutes). The form only
+  confirms after the save succeeds; otherwise it shows the reason and keeps
+  what was typed. A hidden honeypot field quietly drops naive bots.
+- **Contact Messages inbox in the Admin panel** — open messages, newest
+  first, with **Mark handled** (`set_contact_message_status`). Only admins can
+  read the table. Migration `20260906000000_contact_messages.sql`.
 
 ## [0.2.0] - 2026-10-25
 
