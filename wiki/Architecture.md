@@ -41,6 +41,12 @@ flowchart TD
 - **React Router in `HashRouter` mode** — routes live after a `#`
   (`/#/tasks`, `/#/rewards`, `/#/admin`, `/#/admin/history`). This keeps the
   static‑asset host from needing SPA rewrite rules.
+- **Two route trees, chosen by session.** Signed out, `App.tsx` renders the
+  public site — `components/public/PublicLayout.tsx` wrapping `Home`
+  (`/#/`), `AboutUs` (`/#/about`), `Services` (`/#/services`) and `Contact`
+  (`/#/contact`) — plus the standalone sign-in screen at `/#/login`. Signed
+  in, it renders the member app. Each tree has a catch-all that redirects to
+  its own `/`, so a URL from the other tree never renders blank.
 - `App.tsx` holds the session and the signed‑in user's own data; it fetches
   the `profiles` row, active `tasks`, `rewards`, and the user's own
   `submissions` / `reward_claims`. Admin screens run their own wider queries.

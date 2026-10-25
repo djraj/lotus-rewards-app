@@ -5,6 +5,11 @@ no app to install.
 
 ## Signing in
 
+Signed out, the site opens on a public home page (with *About Us*,
+*Services*, and *Contact*). Choose **Login** in the top‑right, or any
+*Member Login* button, to reach the sign‑in screen; *Back to site* returns
+you to the home page.
+
 New sign‑ups default to a regular member (`role: user`). There are three ways in:
 
 - **Email + password.** Choose *Sign up*, enter a name, email, and a password

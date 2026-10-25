@@ -22,7 +22,10 @@ function stripCallbackFromUrl() {
   window.history.replaceState(null, '', window.location.pathname);
 }
 
+// Errors are shown on the sign-in screen, so point HashRouter at it - the
+// redirect otherwise lands on the public home page and the message never shows.
 function setAuthError(message: string) {
+  window.history.replaceState(null, '', window.location.pathname + '#/login');
   try {
     sessionStorage.setItem(ERROR_KEY, message);
   } catch {
