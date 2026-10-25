@@ -9,6 +9,10 @@ the version and date.
 
 ## [Unreleased]
 
+_Nothing yet._
+
+## [0.2.0] - 2026-10-25
+
 ### Added
 - **Public site for signed-out visitors** — instead of dropping straight onto
   the sign-in form, visitors now land on a marketing shell
@@ -316,6 +320,7 @@ them.
 - Initial commit; Vite + React + TypeScript project scaffold ("Lotus Rewards
   App").
 
-[Unreleased]: https://github.com/djraj/lotus-rewards-app/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/djraj/lotus-rewards-app/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/djraj/lotus-rewards-app/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/djraj/lotus-rewards-app/compare/v0.0.1...v0.1.0
 [0.0.1]: https://github.com/djraj/lotus-rewards-app/releases/tag/v0.0.1
