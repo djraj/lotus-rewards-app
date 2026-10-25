@@ -4,6 +4,7 @@ import { supabase } from '../services/supabaseClient';
 import { NavLink } from 'react-router-dom';
 import { takeAuthError } from '../services/authCallback';
 import Logo from './Logo';
+import { FloatingPetals, LotusHero } from './public/Illustrations';
 
 type Mode = 'sign-in' | 'sign-up';
 
@@ -116,151 +117,163 @@ const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="bg-white w-full max-w-md rounded-3xl shadow-sm border border-slate-100 p-8">
-        <div className="mb-8 flex items-center justify-between">
-          <NavLink to="/">
-            <Logo className="h-10 w-auto" />
-          </NavLink>
-          <NavLink to="/" className="text-sm text-slate-500 hover:text-rose-500 transition-colors">
-            <i className="fa-solid fa-arrow-left mr-1"></i> Back to site
-          </NavLink>
-        </div>
-
-        <h1 className="text-2xl font-bold text-slate-800 mb-1">
-          {mode === 'sign-in' ? 'Welcome back' : 'Create your account'}
-        </h1>
-        <p className="text-slate-500 text-sm mb-6">
-          {mode === 'sign-in' ? 'Sign in to continue your journey.' : 'Start earning Lotus Points today.'}
-        </p>
-
-        {message && (
-          <div className={`p-4 rounded-2xl text-sm mb-6 ${
-            message.type === 'success'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-              : 'bg-rose-50 text-rose-700 border border-rose-100'
-          }`}>
-            {message.text}
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-rose-50 via-slate-50 to-amber-50 px-4 py-10 overflow-hidden">
+      <FloatingPetals />
+      <div className="relative w-full max-w-md lg:max-w-4xl grid lg:grid-cols-2 bg-white rounded-3xl shadow-xl shadow-rose-100/60 border border-slate-100 overflow-hidden gl-fade-up">
+        <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-rose-500 to-amber-500 p-10 text-white relative overflow-hidden">
+          <div className="relative">
+            <h2 className="text-3xl font-serif font-bold leading-snug">Welcome to the GLHC member area.</h2>
+            <p className="mt-3 text-rose-50">Sign in to GLHC Member Rewards - log your community tasks, earn Lotus Points and redeem them for sessions, workshops and more.</p>
           </div>
-        )}
+          <div className="relative bg-white/15 rounded-3xl p-4 backdrop-blur-sm">
+            <LotusHero className="w-full h-auto" />
+          </div>
+        </div>
+        <div className="p-8">
+          <div className="mb-8 flex items-center justify-between">
+            <NavLink to="/">
+              <Logo className="h-10 w-auto" />
+            </NavLink>
+            <NavLink to="/" className="text-sm text-slate-500 hover:text-rose-500 transition-colors">
+              <i className="fa-solid fa-arrow-left mr-1"></i> Back to site
+            </NavLink>
+          </div>
 
-        {otpSent && (
-          <form onSubmit={handleVerifyCode} className="space-y-4">
+          <h1 className="text-2xl font-bold text-slate-800 mb-1">
+            {mode === 'sign-in' ? 'Welcome back' : 'Create your account'}
+          </h1>
+          <p className="text-slate-500 text-sm mb-6">
+            {mode === 'sign-in' ? 'Sign in to continue your journey.' : 'Start earning Lotus Points today.'}
+          </p>
+
+          {message && (
+            <div className={`p-4 rounded-2xl text-sm mb-6 ${
+              message.type === 'success'
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                : 'bg-rose-50 text-rose-700 border border-rose-100'
+            }`}>
+              {message.text}
+            </div>
+          )}
+
+          {otpSent && (
+            <form onSubmit={handleVerifyCode} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Enter your code</label>
+                <input
+                  required
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9]*"
+                  maxLength={8}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center text-lg tracking-[0.4em] focus:ring-2 focus:ring-rose-200 outline-none"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder="123456"
+                />
+              </div>
+              <button
+                disabled={loading}
+                className="w-full bg-rose-500 text-white py-3 rounded-2xl font-bold hover:bg-rose-600 transition-all disabled:opacity-50"
+              >
+                {loading ? 'Verifying...' : 'Verify code'}
+              </button>
+              <button
+                type="button"
+                onClick={cancelOtp}
+                disabled={loading}
+                className="w-full text-sm text-slate-500 font-bold hover:underline disabled:opacity-50"
+              >
+                Use a different email
+              </button>
+            </form>
+          )}
+
+          {!otpSent && (
+          <>
+          <form onSubmit={handlePasswordAuth} className="space-y-4">
+            {mode === 'sign-up' && (
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Name</label>
+                <input
+                  type="text"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Alex Rivera"
+                />
+              </div>
+            )}
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">Enter your code</label>
+              <label className="block text-sm font-bold text-slate-700 mb-2">Email</label>
               <input
                 required
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                pattern="[0-9]*"
-                maxLength={8}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-center text-lg tracking-[0.4em] focus:ring-2 focus:ring-rose-200 outline-none"
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-                placeholder="123456"
+                type="email"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">Password</label>
+              <input
+                required
+                type="password"
+                minLength={6}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="********"
+              />
+              {mode === 'sign-in' && (
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={loading}
+                  className="text-xs text-rose-600 font-bold hover:underline mt-2 disabled:opacity-50"
+                >
+                  Forgot password?
+                </button>
+              )}
             </div>
             <button
               disabled={loading}
               className="w-full bg-rose-500 text-white py-3 rounded-2xl font-bold hover:bg-rose-600 transition-all disabled:opacity-50"
             >
-              {loading ? 'Verifying...' : 'Verify code'}
-            </button>
-            <button
-              type="button"
-              onClick={cancelOtp}
-              disabled={loading}
-              className="w-full text-sm text-slate-500 font-bold hover:underline disabled:opacity-50"
-            >
-              Use a different email
+              {loading ? 'Please wait...' : mode === 'sign-in' ? 'Sign In' : 'Create Account'}
             </button>
           </form>
-        )}
 
-        {!otpSent && (
-        <>
-        <form onSubmit={handlePasswordAuth} className="space-y-4">
-          {mode === 'sign-up' && (
-            <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">Name</label>
-              <input
-                type="text"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Alex Rivera"
-              />
-            </div>
-          )}
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Email</label>
-            <input
-              required
-              type="email"
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-grow h-px bg-slate-100"></div>
+            <span className="text-xs text-slate-400 font-medium">OR</span>
+            <div className="flex-grow h-px bg-slate-100"></div>
           </div>
-          <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Password</label>
-            <input
-              required
-              type="password"
-              minLength={6}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-200 outline-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="********"
-            />
-            {mode === 'sign-in' && (
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                disabled={loading}
-                className="text-xs text-rose-600 font-bold hover:underline mt-2 disabled:opacity-50"
-              >
-                Forgot password?
-              </button>
-            )}
-          </div>
+
           <button
+            onClick={handleMagicLink}
             disabled={loading}
-            className="w-full bg-rose-500 text-white py-3 rounded-2xl font-bold hover:bg-rose-600 transition-all disabled:opacity-50"
+            className="w-full bg-slate-100 text-slate-700 py-3 rounded-2xl font-bold hover:bg-slate-200 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            {loading ? 'Please wait...' : mode === 'sign-in' ? 'Sign In' : 'Create Account'}
+            <i className="fa-solid fa-wand-magic-sparkles"></i>
+            Send Magic Link
           </button>
-        </form>
+          </>
+          )}
 
-        <div className="flex items-center gap-3 my-6">
-          <div className="flex-grow h-px bg-slate-100"></div>
-          <span className="text-xs text-slate-400 font-medium">OR</span>
-          <div className="flex-grow h-px bg-slate-100"></div>
+          <p className="text-center text-sm text-slate-500 mt-6">
+            {mode === 'sign-in' ? "Don't have an account? " : 'Already have an account? '}
+            <button
+              type="button"
+              onClick={() => { setMode(mode === 'sign-in' ? 'sign-up' : 'sign-in'); setMessage(null); }}
+              className="text-rose-600 font-bold hover:underline"
+            >
+              {mode === 'sign-in' ? 'Sign up' : 'Sign in'}
+            </button>
+          </p>
         </div>
-
-        <button
-          onClick={handleMagicLink}
-          disabled={loading}
-          className="w-full bg-slate-100 text-slate-700 py-3 rounded-2xl font-bold hover:bg-slate-200 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          <i className="fa-solid fa-wand-magic-sparkles"></i>
-          Send Magic Link
-        </button>
-        </>
-        )}
-
-        <p className="text-center text-sm text-slate-500 mt-6">
-          {mode === 'sign-in' ? "Don't have an account? " : 'Already have an account? '}
-          <button
-            type="button"
-            onClick={() => { setMode(mode === 'sign-in' ? 'sign-up' : 'sign-in'); setMessage(null); }}
-            className="text-rose-600 font-bold hover:underline"
-          >
-            {mode === 'sign-in' ? 'Sign up' : 'Sign in'}
-          </button>
-        </p>
       </div>
     </div>
   );

@@ -18,6 +18,9 @@ import Home from './components/public/Home';
 import AboutUs from './components/public/AboutUs';
 import Services from './components/public/Services';
 import Contact from './components/public/Contact';
+import Workshops from './components/public/Workshops';
+import Seminars from './components/public/Seminars';
+import Donate from './components/public/Donate';
 
 const mapSubmission = (row: any): Submission => ({
   id: row.id,
@@ -228,6 +231,9 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/workshops" element={<Workshops />} />
+            <Route path="/seminars" element={<Seminars />} />
+            <Route path="/donate" element={<Donate />} />
             <Route path="/contact" element={<Contact />} />
           </Route>
           <Route path="/login" element={<Auth />} />
@@ -353,7 +359,7 @@ const App: React.FC = () => {
 
         <footer className="bg-white border-t border-slate-200 py-6 mt-12">
           <div className="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
-            <p>&copy; 2026 GLHC Rewards. Nurturing growth, one step at a time.</p>
+            <p>&copy; 2026 Golden Lotus Healing Center (GLHC). Nurturing growth, one step at a time.</p>
           </div>
         </footer>
 

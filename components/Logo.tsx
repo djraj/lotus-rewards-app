@@ -11,7 +11,7 @@ type LogoProps = {
 const Logo: React.FC<LogoProps> = ({ variant = 'full', className }) => (
   <img
     src={variant === 'mark' ? '/logo-mark.png' : '/logo.png'}
-    alt="GLHC Rewards"
+    alt="Golden Lotus Healing Center"
     className={className}
   />
 );

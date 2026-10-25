@@ -5,10 +5,11 @@ no app to install.
 
 ## Signing in
 
-Signed out, the site opens on a public home page (with *About Us*,
-*Services*, and *Contact*). Choose **Login** in the top‑right, or any
-*Member Login* button, to reach the sign‑in screen; *Back to site* returns
-you to the home page.
+Signed out, the site is the Golden Lotus Healing Center's public website
+(*Home*, *About*, *Workshops*, *Seminars*, *Services*, *Donate*, *Contact*).
+Choose **Login** in the top‑right, or any *Member Login* button, to reach the
+**GLHC Member Rewards** sign‑in screen; *Back to site* returns you to the
+home page.
 
 New sign‑ups default to a regular member (`role: user`). There are three ways in:
 

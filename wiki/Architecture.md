@@ -37,16 +37,30 @@ flowchart TD
   header, `Auth`, and `UpdatePassword` share a single source of truth. The
   favicon set, `apple-touch-icon` (gold lotus on the brand navy `#000745`), and
   the email banner (`logo-email.png`) are generated from the same supplied
-  artwork. The app's display name is **GLHC Rewards**.
+  artwork. The site's name is **Golden Lotus Healing Center**, **GLHC** for
+  short; the signed-in area is **GLHC Member Rewards**.
 - **React Router in `HashRouter` mode** — routes live after a `#`
   (`/#/tasks`, `/#/rewards`, `/#/admin`, `/#/admin/history`). This keeps the
   static‑asset host from needing SPA rewrite rules.
 - **Two route trees, chosen by session.** Signed out, `App.tsx` renders the
-  public site — `components/public/PublicLayout.tsx` wrapping `Home`
-  (`/#/`), `AboutUs` (`/#/about`), `Services` (`/#/services`) and `Contact`
-  (`/#/contact`) — plus the standalone sign-in screen at `/#/login`. Signed
+  public center site — `components/public/PublicLayout.tsx` wrapping `Home`
+  (`/#/`), `AboutUs` (`/#/about`), `Workshops` (`/#/workshops`), `Seminars`
+  (`/#/seminars`), `Services` (`/#/services`), `Donate` (`/#/donate`) and
+  `Contact` (`/#/contact`) — plus the standalone sign-in screen at
+  `/#/login`. The center's contact and bank details, the About-page team list
+  (`TEAM`, sample data until `TEAM_IS_SAMPLE` is set to `false`), and the
+  DuitNow QR path (`public/duitnow-qr.png`) live in one file,
+  `components/public/centerInfo.ts`.
+  Signed
   in, it renders the member app. Each tree has a catch-all that redirects to
   its own `/`, so a URL from the other tree never renders blank.
+- **Public-site visuals** — illustrations are inline SVG components in
+  `components/public/Illustrations.tsx` (bundled; no external image host),
+  and `components/public/Reveal.tsx` fades content in on scroll via
+  `IntersectionObserver`. The keyframes and `gl-*` motion classes live in a
+  `<style>` block in `index.html`, because Tailwind runs from the CDN with no
+  build step to extend its config. Every decorative animation is disabled
+  under `prefers-reduced-motion`.
 - `App.tsx` holds the session and the signed‑in user's own data; it fetches
   the `profiles` row, active `tasks`, `rewards`, and the user's own
   `submissions` / `reward_claims`. Admin screens run their own wider queries.

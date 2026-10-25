@@ -38,6 +38,45 @@ the version and date.
 - **Signed-in users on a public URL** (`#/login`, `#/about`, a stale link, …)
   are redirected to the dashboard instead of seeing an empty page.
 
+### Changed
+- **Public site visual refresh** ([#42](https://github.com/djraj/lotus-rewards-app/issues/42)).
+  The signed-out pages looked plain — no imagery, no motion. They now have
+  brand illustrations drawn as inline SVG (a lotus-on-a-pond hero, a
+  seed → sprout → bloom story scene, spot illustrations per service, an
+  envelope scene on Contact, floating hero badges), soft gradient
+  backgrounds and wave dividers, and a dark footer with links. Motion:
+  scroll-reveal with stagger, drifting petals, a breathing lotus and pond
+  ripples, card hover-lift, a fade between pages, and a nav that gains a
+  shadow on scroll. The sign-in screen gets an illustrated panel on desktop.
+  All decorative motion is off under `prefers-reduced-motion`. No new
+  dependencies or external image hosts.
+- **Rebranded as the Golden Lotus Healing Center (GLHC) website**
+  ([#42](https://github.com/djraj/lotus-rewards-app/issues/42)). The public
+  site now presents a Pranic Healing center rather than only a rewards app:
+  new **Workshops** (healing and spiritual series), **Seminars** and
+  reorganised **Services** (treatments, scanning & counselling, home &
+  prosperity) pages, a Home page with a "begin your journey" topic grid,
+  the three offerings, a "what is Pranic Healing" session strip, and a
+  member-rewards section. The signed-in area is now called **GLHC Member
+  Rewards**; page title, footer and sign-in copy updated. Services carries a
+  complementary-therapy disclaimer. Layout inspired by the Prana World
+  Malaysia site; all wording is original.
+- **Donate page** — bank-transfer details with copy buttons and a DuitNow QR
+  slot. Contact and bank details live in `components/public/centerInfo.ts`
+  and are **placeholders** until the center supplies the real ones; the QR
+  shows "coming soon" until `public/duitnow-qr.png` is added.
+- **"Our team" section on About** — a card per team member (name, role, short
+  bio) with a gradient initials avatar, or a photo once `photo` is set. The
+  six people listed are **sample profiles** from `TEAM` in
+  `components/public/centerInfo.ts`; while `TEAM_IS_SAMPLE` is `true` the
+  section shows a "sample profiles" notice so a deployed build never presents
+  them as real staff.
+- Desktop nav now appears from the `lg` breakpoint (it has seven links); the
+  hamburger menu covers tablet and phone.
+- **Mobile menu closes on any route change** (back/forward, in-page links),
+  not only when a menu item is tapped; each public page now opens scrolled to
+  the top.
+
 ## [0.1.0] - 2026-09-01
 
 ### Added

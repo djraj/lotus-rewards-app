@@ -1,4 +1,4 @@
-### GLHC Rewards
+### Golden Lotus Healing Center (GLHC)
 
 - [Home](Home.md)
 

@@ -4,7 +4,9 @@ Guidance for Claude Code (and humans) working in this repository.
 
 ## What this is
 
-**GLHC Rewards** — a community rewards web app. Members earn Lotus
+**Golden Lotus Healing Center (GLHC)** — the website of a Pranic Healing
+center (public pages incl. a Donate page) plus **GLHC Member Rewards**, a
+community rewards app. Members earn Lotus
 Points by completing real-world tasks (submitted with a photo as proof);
 admins review submissions and award points; members redeem points in a
 rewards marketplace. Full picture: [`wiki/Home.md`](wiki/Home.md) and
@@ -37,6 +39,11 @@ type-check is the only automated gate — `.github/workflows/ci.yml` runs
 App.tsx                 session + the signed-in user's own data; routes
 components/              one file per screen (Dashboard, TasksView, RewardsView,
                         AdminPanel, AdminHistory, Auth, UpdatePassword, TaskSubmissionModal)
+components/public/      signed-out center site: PublicLayout, Home, AboutUs, Workshops,
+                        Seminars, Services, Donate, Contact, PageHeader, Illustrations
+                        (inline SVG art), Reveal (scroll fade-in), centerInfo.ts (contact +
+                        bank details - placeholders until the center supplies them)
+index.html              also holds the gl-* keyframes / motion classes (Tailwind is CDN-only)
 services/               supabaseClient.ts, image.ts (proof-photo compression),
                         authCallback.ts (magic/recovery redirect handling)
 types.ts                the shared domain types
@@ -55,6 +62,13 @@ CHANGELOG.md            Keep a Changelog; unreleased work under `## [Unreleased]
   `docs(wiki): …`, `refactor(submissions): …`, `build(deps): …`.
 - **Branches:** `feature/<slug>` or `<issue#>-<slug>` (e.g. `13-nav-bar-active-section`).
 - **PRs:** one issue per PR where practical; body starts with `Closes #<issue>`.
+- **Issues:** every new issue goes on the **Golden Lotus Roadmap** project
+  and gets a milestone. Pick the milestone that fits the scope (`v1.0.0` /
+  `v2.0.0` / `v3.0.0`, or `Backlog` if unscheduled) and say which one you
+  chose and why when you report the issue:
+  `gh issue create … --milestone "<milestone>" --project "Golden Lotus Roadmap"`
+  (or afterwards: `gh issue edit <n> --milestone "<milestone>"` and
+  `gh project item-add 2 --owner djraj --url <issue-url>`).
 - **No AI attribution.** Commit messages, PR titles/bodies, issue text, code
   comments, release notes, and any other message written into the repo or
   GitHub must not include `Co-Authored-By: Claude …`, "🤖 Generated with
@@ -128,7 +142,9 @@ editing the files here is the source-of-truth step; the sync is separate.
 ## Roadmap
 
 Tracked in GitHub Project **Golden Lotus Roadmap**
-(`https://github.com/users/djraj/projects/2`), milestones `v0.1.0` / `v0.2.0`
-/ `v0.3.0` / Backlog. Releases are semver git tags (`vX.Y.Z`) — see
+(`https://github.com/users/djraj/projects/2`), milestones `v1.0.0` / `v2.0.0`
+/ `v3.0.0` (major releases) / Backlog. Finished work ships before its
+milestone closes as minor releases (`vX.Y.0`), patches as `vX.Y.Z`; the major
+tag is cut when its milestone is empty. Releases are semver git tags — see
 [`wiki/Deployment.md`](wiki/Deployment.md). Unreleased changelog entries go
 under `## [Unreleased]`; a release renames that heading and tags the commit.
