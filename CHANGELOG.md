@@ -27,6 +27,22 @@ the version and date.
 - **Signed-in users on a public URL** (`#/login`, `#/about`, a stale link, …)
   are redirected to the dashboard instead of seeing an empty page.
 
+### Changed
+- **Public site visual refresh** ([#42](https://github.com/djraj/lotus-rewards-app/issues/42)).
+  The signed-out pages looked plain — no imagery, no motion. They now have
+  brand illustrations drawn as inline SVG (a lotus-on-a-pond hero, a
+  seed → sprout → bloom story scene, spot illustrations per service, an
+  envelope scene on Contact, floating "app preview" cards), soft gradient
+  backgrounds and wave dividers, and a dark footer with links. Motion:
+  scroll-reveal with stagger, drifting petals, a breathing lotus and pond
+  ripples, card hover-lift, a fade between pages, and a nav that gains a
+  shadow on scroll. The sign-in screen gets an illustrated panel on desktop.
+  All decorative motion is off under `prefers-reduced-motion`. No new
+  dependencies or external image hosts.
+- **Mobile menu closes on any route change** (back/forward, in-page links),
+  not only when a menu item is tapped; each public page now opens scrolled to
+  the top.
+
 ## [0.1.0] - 2026-09-01
 
 ### Added

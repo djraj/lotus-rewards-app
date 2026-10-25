@@ -23,6 +23,54 @@
       .font-serif {
         font-family: 'Playfair Display', serif;
       }
+
+      /* Public-site motion. Kept here (not Tailwind config) because Tailwind
+         runs from the CDN with no build step. Every loop is decorative and
+         switched off under prefers-reduced-motion at the bottom. */
+      @keyframes gl-fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+      @keyframes gl-fade-in { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes gl-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+      @keyframes gl-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+      @keyframes gl-sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+      @keyframes gl-ripple { from { transform: scale(0.6); opacity: 0.7; } to { transform: scale(1.6); opacity: 0; } }
+      @keyframes gl-drift {
+        0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+        10% { opacity: 0.9; }
+        90% { opacity: 0.9; }
+        100% { transform: translate3d(var(--gl-drift-x, 40px), 110vh, 0) rotate(360deg); opacity: 0; }
+      }
+      @keyframes gl-shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+      @keyframes gl-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+      @keyframes gl-dash { to { stroke-dashoffset: 0; } }
+
+      .gl-reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+      .gl-reveal.is-visible { opacity: 1; transform: none; }
+      .gl-fade-up { animation: gl-fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .gl-page { animation: gl-fade-in 0.5s ease both; }
+      .gl-float { animation: gl-float 6s ease-in-out infinite; }
+      .gl-float-slow { animation: gl-float 9s ease-in-out infinite; }
+      .gl-breathe { animation: gl-breathe 5s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+      .gl-sway { animation: gl-sway 7s ease-in-out infinite; transform-origin: bottom center; transform-box: fill-box; }
+      .gl-ripple { animation: gl-ripple 4s ease-out infinite; transform-origin: center; transform-box: fill-box; }
+      .gl-petal { position: absolute; top: 0; animation: gl-drift linear infinite both; pointer-events: none; }
+      .gl-grow { animation: gl-grow 1.2s cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: bottom; transform-box: fill-box; }
+      .gl-dash { stroke-dasharray: 6 8; }
+      .gl-shimmer-text {
+        background: linear-gradient(90deg, #f43f5e, #f59e0b, #f43f5e);
+        background-size: 200% auto;
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        animation: gl-shimmer 6s linear infinite;
+      }
+      .gl-lift { transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease; }
+      .gl-lift:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -20px rgba(244, 63, 94, 0.35); }
+
+      @media (prefers-reduced-motion: reduce) {
+        .gl-reveal { opacity: 1; transform: none; transition: none; }
+        .gl-fade-up, .gl-page, .gl-float, .gl-float-slow, .gl-breathe, .gl-sway,
+        .gl-ripple, .gl-grow, .gl-shimmer-text { animation: none; }
+        .gl-petal { display: none; }
+        .gl-lift, .gl-lift:hover { transition: none; transform: none; }
+      }
     </style>
 </head>
   <body>

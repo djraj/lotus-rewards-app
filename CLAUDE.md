@@ -37,6 +37,9 @@ type-check is the only automated gate — `.github/workflows/ci.yml` runs
 App.tsx                 session + the signed-in user's own data; routes
 components/              one file per screen (Dashboard, TasksView, RewardsView,
                         AdminPanel, AdminHistory, Auth, UpdatePassword, TaskSubmissionModal)
+components/public/      signed-out site: PublicLayout, Home, AboutUs, Services, Contact,
+                        Illustrations (inline SVG art), Reveal (scroll fade-in)
+index.html              also holds the gl-* keyframes / motion classes (Tailwind is CDN-only)
 services/               supabaseClient.ts, image.ts (proof-photo compression),
                         authCallback.ts (magic/recovery redirect handling)
 types.ts                the shared domain types

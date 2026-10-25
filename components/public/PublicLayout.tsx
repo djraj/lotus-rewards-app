@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import Logo from '../Logo';
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
@@ -19,10 +19,31 @@ const NAV_ITEMS: { to: string; label: string; end?: boolean }[] = [
 // page rendered inside this layout - it routes to the standalone Auth screen.
 const PublicLayout: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // HashRouter keeps the scroll position between pages; start each at the top.
+  // Also close the mobile menu, which otherwise stays open after back/forward
+  // or an in-page link.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setMenuOpen(false);
+  }, [pathname]);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+      <nav
+        className={`sticky top-0 z-50 backdrop-blur-md border-b transition-all duration-300 ${
+          scrolled ? 'bg-white/90 border-slate-200 shadow-lg shadow-slate-200/50' : 'bg-white/70 border-transparent'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <NavLink to="/" onClick={() => setMenuOpen(false)}>
@@ -82,12 +103,45 @@ const PublicLayout: React.FC = () => {
         </div>
       </nav>
 
-      <main className="flex-grow">
+      {/* Keyed on the route so each page fades in on navigation. */}
+      <main key={pathname} className="flex-grow gl-page">
         <Outlet />
       </main>
 
-      <footer className="bg-white border-t border-slate-200 py-6 mt-12">
-        <div className="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+      <footer className="bg-slate-900 text-slate-400 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div>
+            <div className="inline-block bg-white rounded-2xl px-3 py-2">
+              <Logo className="h-9 w-auto" />
+            </div>
+            <p className="mt-4 text-sm leading-relaxed max-w-xs">
+              The community rewards program of the Golden Lotus Healing Center.
+            </p>
+          </div>
+          <div>
+            <p className="text-white font-semibold mb-4">Explore</p>
+            <ul className="space-y-2 text-sm">
+              {NAV_ITEMS.map((item) => (
+                <li key={item.to}>
+                  <NavLink to={item.to} end={item.end} className="hover:text-rose-300 transition-colors">
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-white font-semibold mb-4">Members</p>
+            <p className="text-sm mb-4">Log in to track tasks, earn Lotus Points, and redeem rewards.</p>
+            <NavLink
+              to="/login"
+              className="inline-block bg-rose-500 text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-rose-600 transition-all"
+            >
+              Member Login
+            </NavLink>
+          </div>
+        </div>
+        <div className="border-t border-white/10 py-5 text-center text-xs">
           <p>&copy; 2026 GLHC Rewards. Nurturing growth, one step at a time.</p>
         </div>
       </footer>

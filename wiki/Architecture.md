@@ -47,6 +47,13 @@ flowchart TD
   (`/#/contact`) — plus the standalone sign-in screen at `/#/login`. Signed
   in, it renders the member app. Each tree has a catch-all that redirects to
   its own `/`, so a URL from the other tree never renders blank.
+- **Public-site visuals** — illustrations are inline SVG components in
+  `components/public/Illustrations.tsx` (bundled; no external image host),
+  and `components/public/Reveal.tsx` fades content in on scroll via
+  `IntersectionObserver`. The keyframes and `gl-*` motion classes live in a
+  `<style>` block in `index.html`, because Tailwind runs from the CDN with no
+  build step to extend its config. Every decorative animation is disabled
+  under `prefers-reduced-motion`.
 - `App.tsx` holds the session and the signed‑in user's own data; it fetches
   the `profiles` row, active `tasks`, `rewards`, and the user's own
   `submissions` / `reward_claims`. Admin screens run their own wider queries.

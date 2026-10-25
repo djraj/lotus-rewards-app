@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import Reveal from './Reveal';
+import { ContactScene, FloatingPetals, WaveDivider } from './Illustrations';
 
 const CONTACT_DETAILS = [
   { icon: 'fa-envelope', label: 'Email', value: 'hello@glhcrewards.example' },
@@ -21,20 +23,28 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <header className="text-center max-w-3xl mx-auto mb-16">
-        <h1 className="text-4xl font-serif font-bold text-slate-800">Get in Touch</h1>
-        <p className="mt-6 text-lg text-slate-500">
-          Questions about GLHC Rewards, a task, or your account? Reach out and we will get back to
-          you.
-        </p>
-      </header>
+    <div>
+      <section className="relative overflow-hidden bg-gradient-to-b from-rose-50 to-slate-50">
+        <FloatingPetals />
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-6 md:pt-20 text-center">
+          <p className="gl-fade-up text-rose-500 font-semibold text-sm uppercase tracking-widest">Contact</p>
+          <h1 className="gl-fade-up mt-3 text-4xl md:text-5xl font-serif font-bold text-slate-800" style={{ animationDelay: '0.1s' }}>
+            Get in Touch
+          </h1>
+          <p className="gl-fade-up mt-6 text-lg text-slate-500" style={{ animationDelay: '0.2s' }}>
+            Questions about GLHC Rewards, a task, or your account? Reach out and we will get back to
+            you.
+          </p>
+        </div>
+        <WaveDivider fill="#f8fafc" />
+      </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
-        <div className="space-y-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-5 gap-10">
+        <Reveal className="md:col-span-2 space-y-6">
+          <ContactScene className="w-full max-w-xs mx-auto md:mx-0 h-auto" />
           {CONTACT_DETAILS.map((c) => (
             <div key={c.label} className="flex items-start gap-4">
-              <div className="w-12 h-12 flex-shrink-0 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center text-lg">
+              <div className="w-12 h-12 flex-shrink-0 rounded-2xl bg-gradient-to-br from-rose-400 to-rose-500 text-white flex items-center justify-center text-lg shadow-md shadow-rose-200">
                 <i className={`fa-solid ${c.icon}`}></i>
               </div>
               <div>
@@ -43,11 +53,11 @@ const Contact: React.FC = () => {
               </div>
             </div>
           ))}
-        </div>
+        </Reveal>
 
-        <div className="md:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+        <Reveal delay={150} className="md:col-span-3 bg-white p-8 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 self-start">
           {sent ? (
-            <div className="text-center py-10">
+            <div className="text-center py-10 gl-fade-up">
               <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-2xl mb-4">
                 <i className="fa-solid fa-check"></i>
               </div>
@@ -89,12 +99,12 @@ const Contact: React.FC = () => {
                   placeholder="How can we help?"
                 />
               </div>
-              <button className="w-full bg-rose-500 text-white py-3 rounded-2xl font-bold hover:bg-rose-600 transition-all">
+              <button className="w-full bg-rose-500 text-white py-3 rounded-2xl font-bold shadow-lg shadow-rose-200 hover:bg-rose-600 hover:-translate-y-0.5 transition-all">
                 Send message
               </button>
             </form>
           )}
-        </div>
+        </Reveal>
       </div>
     </div>
   );
