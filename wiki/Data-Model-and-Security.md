@@ -12,7 +12,7 @@ This page is the summary; the migrations are the source of truth.
 | `tasks` | Task catalogue | `title`, `description`, `points`, `icon`, `category` (`Referral` \| `Service` \| `Content` \| `Coordination`), `active` |
 | `rewards` | Reward catalogue | `title`, `description`, `cost`, `image`, `available`, `category` (`Products` \| `Sessions` \| `Workshops` \| `Reviews`) |
 | `submissions` | A task attempt | `user_id`, `task_id`, `task_title` (snapshot), `proof_note`, `proof_image_path`, `points_awarded`, `status`, `created_at`, `updated_at` |
-| `reward_claims` | A redemption or gift | `user_id`, `reward_id`, `reward_title`, `cost`, `status`, `remark`, `granted_by`, `created_at` |
+| `reward_claims` | A redemption or gift | `user_id`, `reward_id`, `reward_title`, `cost`, `status`, `remark`, `granted_by`, `fulfilled_at`, `fulfilled_by`, `delivery_note`, `created_at` |
 | `points_adjustments` | Audit — manual point changes | `user_id`, `admin_id`, `amount`, `remark` |
 | `role_changes` | Audit — role changes | `user_id`, `admin_id`, `old_role`, `new_role` |
 | `private.email_config` | Where triggers send email webhooks | `function_url`, `webhook_secret` |
@@ -24,6 +24,12 @@ This page is the summary; the migrations are the source of truth.
   One `ongoing` row per (user, task) is enforced by a unique index.
 - `reward_claims.status`: `pending` → `approved` \| `rejected`. A gift is
   inserted already `approved` with `granted_by` set.
+- **Fulfilment** is tracked beside `status`, not as a status value: an
+  `approved` claim with `fulfilled_at` set has been delivered to the member
+  (`fulfilled_by` = the admin, `delivery_note` = optional voucher code /
+  booking link). A check constraint allows `fulfilled_at` only on `approved`
+  rows. Keeping `status` unchanged means the email triggers (which fire on
+  status transitions) don't re‑send on fulfilment.
 
 ## Row Level Security
 
@@ -54,6 +60,7 @@ role checks.
 | `request_reward(reward_id)` | any | checks balance; **member** → inserts a `pending` claim; **admin** → deducts and inserts an `approved` claim immediately |
 | `approve_reward_claim(claim_id, decision)` | admin | on approve, re‑checks the user's **current** balance then `points -= cost`; on reject, nothing |
 | `send_reward(user_id, reward_id, remark)` | admin | inserts an `approved` claim with `granted_by`; **no deduction**; remark required |
+| `fulfil_reward_claim(claim_id, note)` | admin | `approved` claims only; sets `fulfilled_at` / `fulfilled_by` and the trimmed note (blank → null); repeat calls are a no‑op |
 | `adjust_points(user_id, amount, remark)` | admin | `points = max(0, points + amount)`; writes `points_adjustments`; remark required |
 | `set_user_role(user_id, role)` | admin | changes another user's role (never your own); writes `role_changes` |
 

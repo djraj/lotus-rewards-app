@@ -61,7 +61,8 @@ CHANGELOG.md            Keep a Changelog; unreleased work under `## [Unreleased]
   Claude Code", or any similar co-authored / generated-by line.
 - **Points and roles** are only ever mutated through the `security definer`
   RPC functions (`approve_submission`, `submit_task`, `request_reward`,
-  `approve_reward_claim`, `send_reward`, `adjust_points`, `set_user_role`).
+  `approve_reward_claim`, `send_reward`, `adjust_points`, `set_user_role`;
+  `fulfil_reward_claim` likewise owns the fulfilment columns).
   Never write `profiles.points` / `profiles.role` from the client, and never
   add a client-side path that does.
 - **Migrations are append-only.** Add a new timestamped file in

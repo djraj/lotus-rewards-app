@@ -40,6 +40,9 @@ export interface RewardClaim {
   status: 'pending' | 'approved' | 'rejected';
   remark: string | null;
   grantedBy: string | null;
+  fulfilledAt: string | null;
+  fulfilledBy: string | null;
+  deliveryNote: string | null;
   timestamp: string;
 }
 

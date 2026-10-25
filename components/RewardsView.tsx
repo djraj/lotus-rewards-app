@@ -12,11 +12,26 @@ interface Props {
 
 const CATEGORY_ORDER: Reward['category'][] = ['Products', 'Sessions', 'Workshops', 'Reviews'];
 
-const CLAIM_STATUS_STYLE: Record<RewardClaim['status'], string> = {
+// "fulfilled" isn't a stored status - it's an approved claim with
+// fulfilled_at set - but members care about it as its own step.
+type ClaimDisplayState = RewardClaim['status'] | 'fulfilled';
+
+const CLAIM_STATUS_STYLE: Record<ClaimDisplayState, string> = {
   pending: 'bg-amber-50 text-amber-600 border-amber-100',
   approved: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+  fulfilled: 'bg-sky-50 text-sky-600 border-sky-100',
   rejected: 'bg-rose-50 text-rose-600 border-rose-100',
 };
+
+const CLAIM_STATUS_LABEL: Record<ClaimDisplayState, string> = {
+  pending: 'Pending approval',
+  approved: 'Approved · on its way',
+  fulfilled: 'Fulfilled',
+  rejected: 'Declined',
+};
+
+const claimDisplayState = (claim: RewardClaim): ClaimDisplayState =>
+  claim.status === 'approved' && claim.fulfilledAt ? 'fulfilled' : claim.status;
 
 const RewardsView: React.FC<Props> = ({ rewards, points, myClaims, onRequestReward, isAdmin }) => {
   const [search, setSearch] = useState('');
@@ -98,14 +113,30 @@ const RewardsView: React.FC<Props> = ({ rewards, points, myClaims, onRequestRewa
         <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
           <h3 className="text-sm font-bold text-slate-700 mb-3">My Redemption Requests</h3>
           <div className="space-y-2">
-            {myClaims.slice(0, 5).map(claim => (
-              <div key={claim.id} className="flex items-center justify-between text-sm py-2 border-b border-slate-50 last:border-0">
-                <span className="text-slate-600">{claim.rewardTitle}</span>
-                <span className={`text-xs font-bold px-3 py-1 rounded-full border ${CLAIM_STATUS_STYLE[claim.status]}`}>
-                  {claim.status === 'pending' ? 'Pending approval' : claim.status === 'approved' ? 'Approved' : 'Declined'}
-                </span>
-              </div>
-            ))}
+            {myClaims.slice(0, 5).map(claim => {
+              const state = claimDisplayState(claim);
+              return (
+                <div key={claim.id} className="text-sm py-2 border-b border-slate-50 last:border-0">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-slate-600">{claim.rewardTitle}</span>
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full border whitespace-nowrap ${CLAIM_STATUS_STYLE[state]}`}>
+                      {CLAIM_STATUS_LABEL[state]}
+                    </span>
+                  </div>
+                  {state === 'fulfilled' && (
+                    <div className="mt-2 text-xs text-slate-500">
+                      Delivered {new Date(claim.fulfilledAt!).toLocaleDateString()}
+                      {claim.deliveryNote && (
+                        <p className="mt-1 text-sm text-slate-700 bg-sky-50 border border-sky-100 rounded-xl p-3 break-words">
+                          <i className="fa-solid fa-ticket mr-2 text-sky-500"></i>
+                          {claim.deliveryNote}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
