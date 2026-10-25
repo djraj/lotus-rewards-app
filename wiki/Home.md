@@ -10,7 +10,7 @@ points in a rewards marketplace on sessions, products, workshops, and review
 classes.
 
 - **Live app:** https://lotus-rewards-app.jariarud.workers.dev/
-- **Version:** 1.0
+- **Version:** 0.2.0 (see [CHANGELOG](https://github.com/djraj/lotus-rewards-app/blob/main/CHANGELOG.md))
 - **Brand:** the mark is a gold lotus. Assets live in `public/`
   (`logo-mark.png` lotus only, `logo.png` lockup with the "Golden Lotus
   Healing Center" wordmark, favicon set, and `logo-email.png` for email),
