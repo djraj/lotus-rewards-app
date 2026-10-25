@@ -62,8 +62,11 @@ Tasks are repeatable — after approval you can start the same task again.
    are **not** deducted yet — they come off only when an admin approves.
 4. While a request is pending the reward shows **Requested** and can't be
    requested again. Track it under **My Redemption Requests**
-   (Pending approval / Approved / Declined). A declined reward can be
-   requested again.
+   (Pending approval / Approved · on its way / Fulfilled / Declined). A
+   declined reward can be requested again.
+5. Once an admin hands the reward over it shows **Fulfilled** with the date
+   and, if there is one, a **delivery note** — a voucher code, booking link,
+   or pick‑up instruction.
 
 ## Status glossary
 
@@ -72,6 +75,7 @@ Tasks are repeatable — after approval you can start the same task again.
 | **Ongoing** | Task started, not yet submitted — a private draft only you can see |
 | **Pending** | Submitted (or reward requested); waiting on an admin decision |
 | **Approved** | Points added (task) or reward granted and points deducted |
+| **Fulfilled** | Reward actually delivered to you — check the delivery note |
 | **Rejected / Declined** | No points awarded / no reward |
 
 ## Emails you'll get

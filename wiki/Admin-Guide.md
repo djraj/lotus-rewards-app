@@ -39,6 +39,15 @@ cost.
   fails and the request stays pending), emails the member.
 - **Reject** — no deduction; the member can request that reward again.
 
+## Awaiting Fulfilment
+
+Every approved redemption and every gift lands here until the member has
+actually received it. When you hand it over, optionally type a **delivery
+note** — a voucher code, booking link, or pick‑up instruction — and choose
+**Mark Fulfilled**. The member sees *Fulfilled*, the date, and the note on
+their Rewards screen; History records who fulfilled it and when. Fulfilment
+can't be undone from the UI and doesn't send an email.
+
 ## Quick Adjust
 
 Add or subtract points for any user. A **remark is required** and every change
@@ -67,9 +76,11 @@ the points are deducted immediately and the claim is recorded as approved.
 The full trail: **Task Submissions** and **Reward Redemptions**, newest first,
 with member name, timestamp, status badge, and points. Search by task, reward,
 or member name; filter by All / Pending / Approved / Rejected. Ongoing drafts
-are not shown. Remarks and gift attribution appear on redemption rows.
+are not shown. Remarks and gift attribution appear on redemption rows, and
+approved redemptions show *Awaiting fulfilment* or *Fulfilled <when> by
+<admin>* with the delivery note.
 
 ## Admin Stats
 
-Totals on the Admin screen: approved / rejected / total submissions and
-pending redemptions.
+Totals on the Admin screen: approved / rejected / total submissions, pending
+redemptions, and redemptions awaiting fulfilment.
