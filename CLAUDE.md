@@ -55,6 +55,10 @@ CHANGELOG.md            Keep a Changelog; unreleased work under `## [Unreleased]
   `docs(wiki): …`, `refactor(submissions): …`, `build(deps): …`.
 - **Branches:** `feature/<slug>` or `<issue#>-<slug>` (e.g. `13-nav-bar-active-section`).
 - **PRs:** one issue per PR where practical; body starts with `Closes #<issue>`.
+- **No AI attribution.** Commit messages, PR titles/bodies, issue text, code
+  comments, release notes, and any other message written into the repo or
+  GitHub must not include `Co-Authored-By: Claude …`, "🤖 Generated with
+  Claude Code", or any similar co-authored / generated-by line.
 - **Points and roles** are only ever mutated through the `security definer`
   RPC functions (`approve_submission`, `submit_task`, `request_reward`,
   `approve_reward_claim`, `send_reward`, `adjust_points`, `set_user_role`).
