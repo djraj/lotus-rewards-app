@@ -41,7 +41,7 @@ const CATEGORIES = [
 const Services: React.FC = () => (
   <div>
     <PageHeader eyebrow="Healing Services" title="Personal sessions with trained healers" tone="emerald">
-      Every session is gentle, fully clothed and no-touch. Visit the centre or receive healing at a
+      Every session is gentle, fully clothed and no-touch. Visit the center or receive healing at a
       distance - our healers will listen first, then tailor the session to you.
     </PageHeader>
 

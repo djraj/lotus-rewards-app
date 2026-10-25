@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { getDailyQuote } from '../../constants';
 import Reveal from './Reveal';
 import { LotusHero, FloatingPetals, WaveDivider, HeroBadges } from './Illustrations';
-import { CENTRE_NAME } from './centreInfo';
+import { CENTER_NAME } from './centerInfo';
 
 const TOPICS = [
   { icon: 'fa-heart', title: 'Emotional Well-being & Relationships', to: '/seminars', tone: 'from-rose-400 to-pink-500' },
@@ -58,7 +58,7 @@ const Home: React.FC = () => (
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 md:pt-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="text-center lg:text-left">
           <span className="gl-fade-up inline-flex items-center gap-2 bg-white/80 backdrop-blur border border-rose-100 text-rose-600 text-sm font-semibold px-4 py-1.5 rounded-full shadow-sm">
-            <i className="fa-solid fa-spa"></i> {CENTRE_NAME}
+            <i className="fa-solid fa-spa"></i> {CENTER_NAME}
           </span>
           <h1
             className="gl-fade-up mt-6 text-4xl md:text-6xl font-serif font-bold text-slate-800 leading-tight"
@@ -67,7 +67,7 @@ const Home: React.FC = () => (
             Balance your energy, <span className="gl-shimmer-text">transform your life.</span>
           </h1>
           <p className="gl-fade-up mt-6 text-lg text-slate-500 max-w-xl mx-auto lg:mx-0" style={{ animationDelay: '0.2s' }}>
-            GLHC is a Pranic Healing centre - a home for no-touch energy healing, practical seminars
+            GLHC is a Pranic Healing center - a home for no-touch energy healing, practical seminars
             and step-by-step workshops that help you feel better, think clearer and live with more
             purpose.
           </p>
@@ -207,7 +207,7 @@ const Home: React.FC = () => (
           <p className="text-rose-500 font-semibold text-sm uppercase tracking-widest">For members</p>
           <h2 className="mt-3 text-3xl md:text-4xl font-serif font-bold text-slate-800">GLHC Member Rewards</h2>
           <p className="mt-4 text-slate-500 leading-relaxed">
-            Our members keep the centre running - volunteering, sharing, and bringing friends to
+            Our members keep the center running - volunteering, sharing, and bringing friends to
             healing sessions. Log those tasks with a photo, an admin approves them, and you earn
             Lotus Points to redeem for sessions, workshops and products.
           </p>
@@ -246,7 +246,7 @@ const Home: React.FC = () => (
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4">Help us keep healing accessible</h2>
           <p className="text-rose-50 max-w-xl mx-auto mb-8">
             Your donation supports free healing sessions, community meditations and the upkeep of the
-            centre. Every contribution, large or small, makes a difference.
+            center. Every contribution, large or small, makes a difference.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <NavLink

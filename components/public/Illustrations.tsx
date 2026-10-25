@@ -251,7 +251,7 @@ export const SpotIllustration: React.FC<{ icon: string; tone?: keyof typeof SPOT
   </div>
 );
 
-// Two small cards floating beside the hero art, naming what the centre does.
+// Two small cards floating beside the hero art, naming what the center does.
 export const HeroBadges: React.FC = () => (
   <>
     <div className="absolute left-0 top-10 md:-left-6 bg-white/90 backdrop-blur-md rounded-2xl shadow-xl shadow-rose-100 border border-rose-50 p-3 pr-5 flex items-center gap-3 gl-float">

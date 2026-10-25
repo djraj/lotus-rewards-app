@@ -27,8 +27,8 @@ const VALUES = [
 
 const AboutUs: React.FC = () => (
   <div>
-    <PageHeader eyebrow="About us" title="Golden Lotus Healing Centre">
-      GLHC is a Pranic Healing centre and a community of healers, students and volunteers. We share
+    <PageHeader eyebrow="About us" title="Golden Lotus Healing Center">
+      GLHC is a Pranic Healing center and a community of healers, students and volunteers. We share
       simple, practical energy-healing techniques so that people can take care of their own
       well-being - and help the people around them.
     </PageHeader>
@@ -53,8 +53,8 @@ const AboutUs: React.FC = () => (
           <div className="bg-white p-8 md:p-12 rounded-[2rem] shadow-sm border border-slate-100">
             <h2 className="text-3xl font-serif font-bold text-slate-800 mb-5">Our Story</h2>
             <p className="text-slate-600 mb-4 leading-relaxed">
-              The Golden Lotus Healing Centre began with a simple wish: to make Pranic Healing easy to
-              find, easy to learn and open to everyone. Today the centre is a place to receive healing,
+              The Golden Lotus Healing Center began with a simple wish: to make Pranic Healing easy to
+              find, easy to learn and open to everyone. Today the center is a place to receive healing,
               join a meditation, attend a seminar or take your first workshop.
             </p>
             <p className="text-slate-600 leading-relaxed">
@@ -78,7 +78,7 @@ const AboutUs: React.FC = () => (
         <div className="text-center md:text-left">
           <h2 className="text-2xl font-serif font-bold">A thank-you for our members</h2>
           <p className="mt-2 text-slate-300">
-            GLHC Member Rewards recognises the people who keep the centre going. Members earn Lotus
+            GLHC Member Rewards recognises the people who keep the center going. Members earn Lotus
             Points for volunteering and community tasks, and redeem them for sessions, workshops and
             products.
           </p>

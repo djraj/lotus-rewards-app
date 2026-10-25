@@ -37,19 +37,18 @@ flowchart TD
   header, `Auth`, and `UpdatePassword` share a single source of truth. The
   favicon set, `apple-touch-icon` (gold lotus on the brand navy `#000745`), and
   the email banner (`logo-email.png`) are generated from the same supplied
-  artwork. The site's name is **Golden Lotus Healing Centre**, **GLHC** for
-  short; the signed-in area is **GLHC Member Rewards**. (The logo artwork still
-  reads "Healing Center" — replacing it needs new artwork.)
+  artwork. The site's name is **Golden Lotus Healing Center**, **GLHC** for
+  short; the signed-in area is **GLHC Member Rewards**.
 - **React Router in `HashRouter` mode** — routes live after a `#`
   (`/#/tasks`, `/#/rewards`, `/#/admin`, `/#/admin/history`). This keeps the
   static‑asset host from needing SPA rewrite rules.
 - **Two route trees, chosen by session.** Signed out, `App.tsx` renders the
-  public centre site — `components/public/PublicLayout.tsx` wrapping `Home`
+  public center site — `components/public/PublicLayout.tsx` wrapping `Home`
   (`/#/`), `AboutUs` (`/#/about`), `Workshops` (`/#/workshops`), `Seminars`
   (`/#/seminars`), `Services` (`/#/services`), `Donate` (`/#/donate`) and
   `Contact` (`/#/contact`) — plus the standalone sign-in screen at
-  `/#/login`. The centre's contact and bank details (and the DuitNow QR path,
-  `public/duitnow-qr.png`) live in one file, `components/public/centreInfo.ts`.
+  `/#/login`. The center's contact and bank details (and the DuitNow QR path,
+  `public/duitnow-qr.png`) live in one file, `components/public/centerInfo.ts`.
   Signed
   in, it renders the member app. Each tree has a catch-all that redirects to
   its own `/`, so a URL from the other tree never renders blank.

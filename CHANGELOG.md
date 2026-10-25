@@ -50,9 +50,9 @@ the version and date.
   shadow on scroll. The sign-in screen gets an illustrated panel on desktop.
   All decorative motion is off under `prefers-reduced-motion`. No new
   dependencies or external image hosts.
-- **Rebranded as the Golden Lotus Healing Centre (GLHC) website**
+- **Rebranded as the Golden Lotus Healing Center (GLHC) website**
   ([#42](https://github.com/djraj/lotus-rewards-app/issues/42)). The public
-  site now presents a Pranic Healing centre rather than only a rewards app:
+  site now presents a Pranic Healing center rather than only a rewards app:
   new **Workshops** (healing and spiritual series), **Seminars** and
   reorganised **Services** (treatments, scanning & counselling, home &
   prosperity) pages, a Home page with a "begin your journey" topic grid,
@@ -62,8 +62,8 @@ the version and date.
   complementary-therapy disclaimer. Layout inspired by the Prana World
   Malaysia site; all wording is original.
 - **Donate page** — bank-transfer details with copy buttons and a DuitNow QR
-  slot. Contact and bank details live in `components/public/centreInfo.ts`
-  and are **placeholders** until the centre supplies the real ones; the QR
+  slot. Contact and bank details live in `components/public/centerInfo.ts`
+  and are **placeholders** until the center supplies the real ones; the QR
   shows "coming soon" until `public/duitnow-qr.png` is added.
 - Desktop nav now appears from the `lg` breakpoint (it has seven links); the
   hamburger menu covers tablet and phone.

@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Reveal from './Reveal';
 import PageHeader from './PageHeader';
-import { DONATION_BANK, DUITNOW_QR_SRC } from './centreInfo';
+import { DONATION_BANK, DUITNOW_QR_SRC } from './centerInfo';
 
 const IMPACT = [
   { icon: 'fa-hand-holding-medical', title: 'Healing for all', text: 'Help us offer healing to anyone who needs it, whatever they can afford.' },
   { icon: 'fa-om', title: 'Group meditations', text: 'Support regular Meditation on Twin Hearts sessions for peace and goodwill.' },
-  { icon: 'fa-house-chimney-window', title: 'A home for healing', text: 'Help with rent, utilities and upkeep of the centre.' },
+  { icon: 'fa-house-chimney-window', title: 'A home for healing', text: 'Help with rent, utilities and upkeep of the center.' },
 ];
 
 const BANK_ROWS: { label: string; value: string; copy?: boolean; compact?: boolean }[] = [
@@ -50,7 +50,7 @@ const Donate: React.FC = () => {
 
   return (
     <div>
-      <PageHeader eyebrow="Donate" title="Support the work of the centre">
+      <PageHeader eyebrow="Donate" title="Support the work of the center">
         GLHC runs on the generosity of our community. Your gift helps us offer healing, meditation and
         learning to everyone who walks through our doors.
       </PageHeader>
@@ -111,7 +111,7 @@ const Donate: React.FC = () => {
                 ) : (
                   <img
                     src={DUITNOW_QR_SRC}
-                    alt="DuitNow QR code for donations to Golden Lotus Healing Centre"
+                    alt="DuitNow QR code for donations to Golden Lotus Healing Center"
                     className="w-full h-full object-contain bg-white"
                     onError={() => setQrMissing(true)}
                   />

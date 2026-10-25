@@ -1,4 +1,4 @@
-### Golden Lotus Healing Centre (GLHC)
+### Golden Lotus Healing Center (GLHC)
 
 - [Home](Home.md)
 

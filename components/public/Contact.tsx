@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Reveal from './Reveal';
 import PageHeader from './PageHeader';
 import { ContactScene } from './Illustrations';
-import { CONTACT_DETAILS } from './centreInfo';
+import { CONTACT_DETAILS } from './centerInfo';
 
 // Sample contact form - no backend wired up yet. It just confirms the
 // message locally so the page reads as finished rather than broken; a real

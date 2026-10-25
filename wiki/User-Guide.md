@@ -5,7 +5,7 @@ no app to install.
 
 ## Signing in
 
-Signed out, the site is the Golden Lotus Healing Centre's public website
+Signed out, the site is the Golden Lotus Healing Center's public website
 (*Home*, *About*, *Workshops*, *Seminars*, *Services*, *Donate*, *Contact*).
 Choose **Login** in the top‑right, or any *Member Login* button, to reach the
 **GLHC Member Rewards** sign‑in screen; *Back to site* returns you to the

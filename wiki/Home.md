@@ -1,7 +1,7 @@
-# Golden Lotus Healing Centre (GLHC)
+# Golden Lotus Healing Center (GLHC)
 
-The website of the **Golden Lotus Healing Centre (GLHC)**, a Pranic Healing
-centre. Signed out, visitors see the centre's public pages — Home, About,
+The website of the **Golden Lotus Healing Center (GLHC)**, a Pranic Healing
+center. Signed out, visitors see the center's public pages — Home, About,
 Workshops, Seminars, Services, Donate and Contact. Signed in, **GLHC Member
 Rewards** takes over: members earn
 **Lotus Points** by completing real‑world tasks and submitting a photo as

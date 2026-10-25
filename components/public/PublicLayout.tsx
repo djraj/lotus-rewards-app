@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import Logo from '../Logo';
-import { CENTRE_NAME, CENTRE_SHORT_NAME, CENTRE_TAGLINE, CONTACT_DETAILS } from './centreInfo';
+import { CENTER_NAME, CENTER_SHORT_NAME, CENTER_TAGLINE, CONTACT_DETAILS } from './centerInfo';
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
   isActive
@@ -19,7 +19,7 @@ const NAV_ITEMS: { to: string; label: string; end?: boolean }[] = [
 ];
 
 // Public-facing shell for signed-out visitors: nav + footer around a routed
-// centre page. "Login" is a CTA button, not a page rendered inside this
+// center page. "Login" is a CTA button, not a page rendered inside this
 // layout - it routes to the standalone Auth screen (the member area).
 const PublicLayout: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -119,7 +119,7 @@ const PublicLayout: React.FC = () => {
               <Logo className="h-9 w-auto" />
             </div>
             <p className="mt-4 text-sm leading-relaxed max-w-xs">
-              {CENTRE_NAME} - Pranic Healing, seminars and workshops for body, mind and spirit.
+              {CENTER_NAME} - Pranic Healing, seminars and workshops for body, mind and spirit.
             </p>
             <ul className="mt-4 space-y-1 text-sm">
               {CONTACT_DETAILS.map((c) => (
@@ -153,7 +153,7 @@ const PublicLayout: React.FC = () => {
           </div>
         </div>
         <div className="border-t border-white/10 py-5 text-center text-xs">
-          <p>&copy; 2026 {CENTRE_NAME} ({CENTRE_SHORT_NAME}). {CENTRE_TAGLINE}</p>
+          <p>&copy; 2026 {CENTER_NAME} ({CENTER_SHORT_NAME}). {CENTER_TAGLINE}</p>
         </div>
       </footer>
     </div>
