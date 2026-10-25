@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
+import { NavLink } from 'react-router-dom';
 import { takeAuthError } from '../services/authCallback';
 import Logo from './Logo';
 
@@ -117,8 +118,13 @@ const Auth: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="bg-white w-full max-w-md rounded-3xl shadow-sm border border-slate-100 p-8">
-        <div className="mb-8">
-          <Logo className="h-10 w-auto" />
+        <div className="mb-8 flex items-center justify-between">
+          <NavLink to="/">
+            <Logo className="h-10 w-auto" />
+          </NavLink>
+          <NavLink to="/" className="text-sm text-slate-500 hover:text-rose-500 transition-colors">
+            <i className="fa-solid fa-arrow-left mr-1"></i> Back to site
+          </NavLink>
         </div>
 
         <h1 className="text-2xl font-bold text-slate-800 mb-1">

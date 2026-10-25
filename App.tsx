@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import { User, Task, Reward, Submission, RewardClaim } from './types';
 import { supabase } from './services/supabaseClient';
 import { compressImage } from './services/image';
@@ -13,6 +13,11 @@ import AdminHistory from './components/AdminHistory';
 import Logo from './components/Logo';
 import Auth from './components/Auth';
 import UpdatePassword from './components/UpdatePassword';
+import PublicLayout from './components/public/PublicLayout';
+import Home from './components/public/Home';
+import AboutUs from './components/public/AboutUs';
+import Services from './components/public/Services';
+import Contact from './components/public/Contact';
 
 const mapSubmission = (row: any): Submission => ({
   id: row.id,
@@ -213,7 +218,20 @@ const App: React.FC = () => {
   }
 
   if (!session) {
-    return <Auth />;
+    return (
+      <HashRouter>
+        <Routes>
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
+          </Route>
+          <Route path="/login" element={<Auth />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </HashRouter>
+    );
   }
 
   if (loadingData || !profile) {
@@ -325,6 +343,8 @@ const App: React.FC = () => {
                 )
               }
             />
+            {/* Public routes (#/login, #/about, ...) have no signed-in page - land on the dashboard. */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
 

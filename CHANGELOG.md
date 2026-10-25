@@ -9,7 +9,23 @@ the version and date.
 
 ## [Unreleased]
 
-_Nothing yet._
+### Added
+- **Public site for signed-out visitors** — instead of dropping straight onto
+  the sign-in form, visitors now land on a marketing shell
+  (`components/public/`) with **Home**, **About Us**, **Services**, and
+  **Contact** pages, a shared nav/footer, and a mobile menu. The sign-in
+  screen moved to `#/login` (reached from the nav's *Login* button or the
+  *Member Login* calls to action) and has a *Back to site* link.
+- **Contact page form is a placeholder** — it confirms locally but does not
+  send anything yet, and the email / phone / address shown are sample values
+  to be replaced before release.
+
+### Fixed
+- **Failed magic links show their error again.** With the public home page at
+  `#/`, an auth-callback error (expired or already-used link) now redirects to
+  `#/login` so the reason is shown on the sign-in screen rather than lost.
+- **Signed-in users on a public URL** (`#/login`, `#/about`, a stale link, …)
+  are redirected to the dashboard instead of seeing an empty page.
 
 ## [0.1.0] - 2026-09-01
 
